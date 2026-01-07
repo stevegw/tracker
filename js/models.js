@@ -39,6 +39,12 @@ class CategoryModel {
 
         this.categories.push(category);
         this.save();
+
+        // Sync to Supabase if available
+        if (typeof SupabaseSync !== 'undefined') {
+            SupabaseSync.saveCategory(category);
+        }
+
         return category;
     }
 
@@ -56,6 +62,12 @@ class CategoryModel {
         };
 
         this.save();
+
+        // Sync to Supabase if available
+        if (typeof SupabaseSync !== 'undefined') {
+            SupabaseSync.saveCategory(this.categories[index]);
+        }
+
         return this.categories[index];
     }
 
@@ -80,6 +92,12 @@ class CategoryModel {
 
         this.categories.splice(index, 1);
         this.save();
+
+        // Sync to Supabase if available
+        if (typeof SupabaseSync !== 'undefined') {
+            SupabaseSync.deleteCategory(id);
+        }
+
         return true;
     }
 
@@ -153,6 +171,12 @@ class ActivityModel {
 
         this.activities.push(activity);
         this.save();
+
+        // Sync to Supabase if available
+        if (typeof SupabaseSync !== 'undefined') {
+            SupabaseSync.saveActivity(activity);
+        }
+
         return activity;
     }
 
@@ -177,6 +201,12 @@ class ActivityModel {
         };
 
         this.save();
+
+        // Sync to Supabase if available
+        if (typeof SupabaseSync !== 'undefined') {
+            SupabaseSync.saveActivity(this.activities[index]);
+        }
+
         return this.activities[index];
     }
 
@@ -189,6 +219,12 @@ class ActivityModel {
 
         this.activities.splice(index, 1);
         this.save();
+
+        // Sync to Supabase if available
+        if (typeof SupabaseSync !== 'undefined') {
+            SupabaseSync.deleteActivity(id);
+        }
+
         return true;
     }
 

@@ -26,15 +26,26 @@
             </div>
         </div>
         <div class="header-actions">
-            <div class="sync-status-container">
-                <span class="sync-status" id="sync-status">Not connected</span>
-            </div>
             <input type="text" id="search-input" class="search-input" placeholder="Search activities...">
             <button class="btn btn-primary" id="add-activity-btn">+ New Activity</button>
             <button class="btn btn-icon" id="stats-btn" title="Statistics">📊</button>
             <button class="btn btn-icon" id="settings-btn" title="Settings">⚙️</button>
+            <button class="btn btn-primary" id="auth-btn" style="display: none;">Sign In</button>
+            <div id="user-menu" style="display: none; align-items: center; gap: 12px;">
+                <span id="user-email" style="font-size: 12px; color: var(--text-secondary);"></span>
+                <button class="btn btn-secondary btn-small" id="sign-out-btn">Sign Out</button>
+            </div>
         </div>
     </header>
+
+    <!-- Auth Prompt (shown when not logged in) -->
+    <div id="auth-prompt" style="display: none; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; background: var(--surface); margin: 40px; border-radius: 12px; text-align: center;">
+        <h2 style="margin-bottom: 16px;">Welcome to Technical Enablement Tracker</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 24px; max-width: 500px;">
+            Track your learning activities, monitor progress, and stay focused on completing your technical enablement goals.
+        </p>
+        <button class="btn btn-primary" id="auth-prompt-btn">Sign In to Get Started</button>
+    </div>
 
     <!-- Main Layout -->
     <div class="main-layout">
@@ -231,32 +242,6 @@
                 </div>
 
                 <div class="settings-section">
-                    <h3>Cloud Sync (Google Drive)</h3>
-                    <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
-                        Sync your data across devices using Google Drive.
-                        <a href="https://console.cloud.google.com/" target="_blank" style="color: var(--primary-color);">Get API credentials</a>
-                    </p>
-                    <div class="form-group">
-                        <label for="google-client-id">Client ID</label>
-                        <input type="text" id="google-client-id" class="form-input" placeholder="Your Google OAuth Client ID">
-                    </div>
-                    <div class="form-group">
-                        <label for="google-api-key">API Key</label>
-                        <input type="text" id="google-api-key" class="form-input" placeholder="Your Google API Key">
-                    </div>
-                    <label class="checkbox-label" style="margin-bottom: 12px;">
-                        <input type="checkbox" id="auto-sync-toggle" checked>
-                        Auto-sync on changes
-                    </label>
-                    <button class="btn btn-block btn-primary" id="save-cloud-config-btn">Save Configuration</button>
-                    <div id="cloud-sync-actions" style="margin-top: 12px; display: none;">
-                        <button class="btn btn-block" id="connect-drive-btn">Connect to Google Drive</button>
-                        <button class="btn btn-block" id="disconnect-drive-btn" style="display: none;">Disconnect</button>
-                        <button class="btn btn-block" id="sync-now-btn" style="display: none;">Sync Now</button>
-                    </div>
-                </div>
-
-                <div class="settings-section">
                     <h3>Notifications</h3>
                     <label class="checkbox-label">
                         <input type="checkbox" id="notifications-toggle">
@@ -272,14 +257,71 @@
         </div>
     </div>
 
+    <!-- Auth Modal -->
+    <div class="modal" id="auth-modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Welcome</h2>
+                <button class="modal-close" id="auth-modal-close">&times;</button>
+            </div>
+
+            <!-- Sign In Form -->
+            <div id="signin-container">
+                <form id="signin-form" style="padding: 24px;">
+                    <div class="form-group">
+                        <label for="signin-email">Email</label>
+                        <input type="email" id="signin-email" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signin-password">Password</label>
+                        <input type="password" id="signin-password" class="form-input" required>
+                    </div>
+                    <div id="signin-error" style="color: var(--danger-color); font-size: 12px; margin-bottom: 12px;"></div>
+                    <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                    <p style="text-align: center; margin-top: 16px; font-size: 13px;">
+                        Don't have an account? <a href="#" id="show-signup" style="color: var(--primary-color);">Sign up</a>
+                    </p>
+                </form>
+            </div>
+
+            <!-- Sign Up Form -->
+            <div id="signup-container" style="display: none;">
+                <form id="signup-form" style="padding: 24px;">
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" class="form-input" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm-password">Confirm Password</label>
+                        <input type="password" id="signup-confirm-password" class="form-input" required>
+                    </div>
+                    <div id="signup-error" style="color: var(--danger-color); font-size: 12px; margin-bottom: 12px;"></div>
+                    <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                    <p style="text-align: center; margin-top: 16px; font-size: 13px;">
+                        Already have an account? <a href="#" id="show-signin" style="color: var(--primary-color);">Sign in</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
 
     <!-- Scripts -->
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script src="js/utils.js"></script>
     <script src="js/storage.js"></script>
+    <script src="js/supabase-client.js"></script>
     <script src="js/models.js"></script>
-    <script src="js/sync.js"></script>
+    <script src="js/supabase-sync.js"></script>
+    <script src="js/components/auth.js"></script>
     <script src="js/components/header.js"></script>
     <script src="js/components/sidebar.js"></script>
     <script src="js/components/activity-list.js"></script>

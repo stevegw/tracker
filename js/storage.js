@@ -20,10 +20,6 @@ const Storage = {
      */
     saveCategories(categories) {
         localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
-        // Trigger cloud sync if available
-        if (typeof CloudSync !== 'undefined') {
-            CloudSync.scheduleAutoSync();
-        }
     },
 
     /**
@@ -39,10 +35,6 @@ const Storage = {
      */
     saveActivities(activities) {
         localStorage.setItem(STORAGE_KEYS.ACTIVITIES, JSON.stringify(activities));
-        // Trigger cloud sync if available
-        if (typeof CloudSync !== 'undefined') {
-            CloudSync.scheduleAutoSync();
-        }
     },
 
     /**

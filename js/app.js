@@ -4,25 +4,19 @@
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('Technical Enablement Tracker - Starting...');
 
+    // Initialize Supabase client
+    if (!initSupabase()) {
+        console.error('Failed to initialize Supabase');
+        return;
+    }
+
+    // Initialize authentication
+    await AuthComponent.init();
+
     // Initialize UI Controller
     UIController.init();
 
-    // Initialize cloud sync if configured
-    const config = CloudSync.getConfig();
-    if (config.clientId && config.apiKey) {
-        await CloudSync.init();
-        console.log('Cloud sync ready');
-    }
-
     console.log('Technical Enablement Tracker - Ready!');
-
-    // Show welcome message for first-time users
-    const activityModel = new ActivityModel();
-    const categoryModel = new CategoryModel();
-
-    if (activityModel.getAll().length === 0 && categoryModel.getAll().length === 0) {
-        showWelcomeMessage();
-    }
 });
 
 /**
