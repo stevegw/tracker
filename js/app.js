@@ -1,7 +1,14 @@
 // Main application entry point
 
-// Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', async () => {
+// Wait for Supabase library to load, then initialize the app
+function initializeApp() {
+    // Check if Supabase library is loaded
+    if (typeof window.supabase === 'undefined') {
+        console.log('Waiting for Supabase library to load...');
+        setTimeout(initializeApp, 100);
+        return;
+    }
+
     console.log('Technical Enablement Tracker - Starting...');
 
     // Initialize Supabase client
@@ -11,13 +18,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Initialize authentication
-    await AuthComponent.init();
+    AuthComponent.init().then(() => {
+        // Initialize UI Controller
+        UIController.init();
+        console.log('Technical Enablement Tracker - Ready!');
+    });
+}
 
-    // Initialize UI Controller
-    UIController.init();
-
-    console.log('Technical Enablement Tracker - Ready!');
-});
+// Initialize the app when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeApp);
 
 /**
  * Show welcome message for first-time users
