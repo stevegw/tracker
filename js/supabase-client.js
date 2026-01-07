@@ -6,7 +6,7 @@ const SUPABASE_CONFIG = {
 };
 
 // Supabase client (will be initialized when Supabase JS loads)
-let supabase = null;
+let supabaseClient = null;
 
 /**
  * Initialize Supabase client
@@ -17,7 +17,7 @@ function initSupabase() {
         return false;
     }
 
-    supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+    supabaseClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
     console.log('Supabase client initialized');
     return true;
 }
@@ -26,9 +26,9 @@ function initSupabase() {
  * Get current user
  */
 async function getCurrentUser() {
-    if (!supabase) return null;
+    if (!supabaseClient) return null;
 
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const { data: { user }, error } = await supabaseClient.auth.getUser();
     if (error) {
         console.error('Error getting user:', error);
         return null;

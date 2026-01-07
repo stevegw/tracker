@@ -17,7 +17,7 @@ const AuthComponent = {
         }
 
         // Listen for auth state changes
-        supabase.auth.onAuthStateChange((event, session) => {
+        supabaseClient.auth.onAuthStateChange((event, session) => {
             console.log('Auth state changed:', event);
 
             if (event === 'SIGNED_IN') {
@@ -207,7 +207,7 @@ const AuthComponent = {
         if (errorEl) errorEl.textContent = '';
 
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
                 email,
                 password
             });
@@ -250,7 +250,7 @@ const AuthComponent = {
         }
 
         try {
-            const { data, error } = await supabase.auth.signUp({
+            const { data, error } = await supabaseClient.auth.signUp({
                 email,
                 password
             });
@@ -271,7 +271,7 @@ const AuthComponent = {
      */
     async signOut() {
         try {
-            const { error } = await supabase.auth.signOut();
+            const { error } = await supabaseClient.auth.signOut();
             if (error) throw error;
 
             UIController.showToast('Signed out successfully', 'success');

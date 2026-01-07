@@ -16,7 +16,7 @@ const SupabaseSync = {
 
         try {
             // Load categories
-            const { data: categories, error: catError } = await supabase
+            const { data: categories, error: catError } = await supabaseClient
                 .from('categories')
                 .select('*')
                 .eq('user_id', user.id);
@@ -24,7 +24,7 @@ const SupabaseSync = {
             if (catError) throw catError;
 
             // Load activities
-            const { data: activities, error: actError } = await supabase
+            const { data: activities, error: actError } = await supabaseClient
                 .from('activities')
                 .select('*')
                 .eq('user_id', user.id);
@@ -62,7 +62,7 @@ const SupabaseSync = {
                 user_id: user.id
             };
 
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('categories')
                 .upsert(categoryData)
                 .select();
@@ -86,7 +86,7 @@ const SupabaseSync = {
         if (!user) return;
 
         try {
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from('categories')
                 .delete()
                 .eq('id', categoryId)
@@ -115,7 +115,7 @@ const SupabaseSync = {
                 user_id: user.id
             };
 
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('activities')
                 .upsert(activityData)
                 .select();
@@ -139,7 +139,7 @@ const SupabaseSync = {
         if (!user) return;
 
         try {
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from('activities')
                 .delete()
                 .eq('id', activityId)
