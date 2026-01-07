@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Enablement Tracker</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/utilities.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <h1 class="header-title">Technical Enablement Tracker</h1>
+            <p class="header-subtitle">Build your knowledge, track your progress</p>
+        </div>
+        <div class="header-stats">
+            <div class="stat-item">
+                <span class="stat-label">Completion</span>
+                <span class="stat-value" id="header-completion">0%</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Streak</span>
+                <span class="stat-value" id="header-streak">0 days</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <div class="sync-status-container">
+                <span class="sync-status" id="sync-status">Not connected</span>
+            </div>
+            <input type="text" id="search-input" class="search-input" placeholder="Search activities...">
+            <button class="btn btn-primary" id="add-activity-btn">+ New Activity</button>
+            <button class="btn btn-icon" id="stats-btn" title="Statistics">📊</button>
+            <button class="btn btn-icon" id="settings-btn" title="Settings">⚙️</button>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Categories</h3>
+                <button class="btn btn-small btn-block" id="add-category-btn">+ Add Category</button>
+            </div>
+            <nav class="category-list" id="category-list">
+                <div class="category-item active" data-category-id="all">
+                    <span class="category-name">All Activities</span>
+                    <span class="category-count" id="all-count">0</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="status-filter">Status:</label>
+                    <select id="status-filter" class="filter-select">
+                        <option value="">All</option>
+                        <option value="not-started">Not Started</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="sort-by">Sort by:</label>
+                    <select id="sort-by" class="filter-select">
+                        <option value="updatedAt">Recently Updated</option>
+                        <option value="createdAt">Recently Created</option>
+                        <option value="dueDate">Due Date</option>
+                        <option value="title">Title</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="overdue-filter">
+                        Overdue Only
+                    </label>
+                </div>
+                <div class="filter-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="due-soon-filter">
+                        Due Soon
+                    </label>
+                </div>
+            </div>
+
+            <!-- Activity List -->
+            <div class="activity-list" id="activity-list">
+                <!-- Activities will be rendered here -->
+                <div class="empty-state">
+                    <h2>No activities yet</h2>
+                    <p>Create your first activity to get started tracking your technical enablement journey.</p>
+                    <button class="btn btn-primary" id="empty-add-btn">+ Create Activity</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Activity Form Modal -->
+    <div class="modal" id="activity-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="activity-modal-title">New Activity</h2>
+                <button class="modal-close" id="activity-modal-close">&times;</button>
+            </div>
+            <form id="activity-form">
+                <input type="hidden" id="activity-id">
+
+                <div class="form-group">
+                    <label for="activity-title">Title *</label>
+                    <input type="text" id="activity-title" required class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="activity-description">Description</label>
+                    <textarea id="activity-description" class="form-textarea" rows="3"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="activity-category">Category</label>
+                        <select id="activity-category" class="form-select">
+                            <option value="">None</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="activity-status">Status</label>
+                        <select id="activity-status" class="form-select">
+                            <option value="not-started">Not Started</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="activity-due-date">Due Date</label>
+                        <input type="date" id="activity-due-date" class="form-input">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="activity-notes">Notes</label>
+                    <textarea id="activity-notes" class="form-textarea" rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Resources</label>
+                    <div id="resources-list" class="resources-list">
+                        <!-- Resources will be added here -->
+                    </div>
+                    <div class="resource-add">
+                        <input type="text" id="resource-title" placeholder="Resource title" class="form-input">
+                        <input type="url" id="resource-url" placeholder="https://..." class="form-input">
+                        <button type="button" class="btn btn-small" id="add-resource-btn">Add Resource</button>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="activity-cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Activity</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Form Modal -->
+    <div class="modal" id="category-modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2 id="category-modal-title">New Category</h2>
+                <button class="modal-close" id="category-modal-close">&times;</button>
+            </div>
+            <form id="category-form">
+                <input type="hidden" id="category-id">
+
+                <div class="form-group">
+                    <label for="category-name">Name *</label>
+                    <input type="text" id="category-name" required class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="category-description">Description</label>
+                    <textarea id="category-description" class="form-textarea" rows="2"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="category-color">Color</label>
+                    <input type="color" id="category-color" class="form-color">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="category-cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Stats Dashboard Modal -->
+    <div class="modal" id="stats-modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>Statistics Dashboard</h2>
+                <button class="modal-close" id="stats-modal-close">&times;</button>
+            </div>
+            <div class="stats-dashboard" id="stats-dashboard">
+                <!-- Stats will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settings-modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="modal-close" id="settings-modal-close">&times;</button>
+            </div>
+            <div class="settings-content">
+                <div class="settings-section">
+                    <h3>Data Management</h3>
+                    <button class="btn btn-block" id="export-btn">Export Data</button>
+                    <button class="btn btn-block" id="import-btn">Import Data</button>
+                    <input type="file" id="import-file-input" accept=".json" style="display: none;">
+                    <button class="btn btn-block btn-danger" id="clear-data-btn">Clear All Data</button>
+                </div>
+
+                <div class="settings-section">
+                    <h3>Cloud Sync (Google Drive)</h3>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
+                        Sync your data across devices using Google Drive.
+                        <a href="https://console.cloud.google.com/" target="_blank" style="color: var(--primary-color);">Get API credentials</a>
+                    </p>
+                    <div class="form-group">
+                        <label for="google-client-id">Client ID</label>
+                        <input type="text" id="google-client-id" class="form-input" placeholder="Your Google OAuth Client ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="google-api-key">API Key</label>
+                        <input type="text" id="google-api-key" class="form-input" placeholder="Your Google API Key">
+                    </div>
+                    <label class="checkbox-label" style="margin-bottom: 12px;">
+                        <input type="checkbox" id="auto-sync-toggle" checked>
+                        Auto-sync on changes
+                    </label>
+                    <button class="btn btn-block btn-primary" id="save-cloud-config-btn">Save Configuration</button>
+                    <div id="cloud-sync-actions" style="margin-top: 12px; display: none;">
+                        <button class="btn btn-block" id="connect-drive-btn">Connect to Google Drive</button>
+                        <button class="btn btn-block" id="disconnect-drive-btn" style="display: none;">Disconnect</button>
+                        <button class="btn btn-block" id="sync-now-btn" style="display: none;">Sync Now</button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>Notifications</h3>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="notifications-toggle">
+                        Enable browser notifications
+                    </label>
+                </div>
+
+                <div class="settings-section">
+                    <h3>Storage Info</h3>
+                    <div id="storage-info"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/models.js"></script>
+    <script src="js/sync.js"></script>
+    <script src="js/components/header.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/components/activity-list.js"></script>
+    <script src="js/components/activity-form.js"></script>
+    <script src="js/components/stats-dashboard.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

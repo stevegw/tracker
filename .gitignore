@@ -1,0 +1,42 @@
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary Files
+*.tmp
+*.temp
+.cache/
+
+# Notes (if you want to keep private notes)
+notes.md
+TODO.md
+
+# Backup files
+*.bak
+*.backup
+
+# Don't commit user-specific config (credentials are stored in localStorage, so this is safe)
+# But if anyone creates a config file, ignore it
+config.json
+credentials.json
