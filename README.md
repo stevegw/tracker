@@ -263,27 +263,41 @@ tracker/
 
 ### Version Management
 
-The app displays its version in the bottom right corner (e.g., "v1.0.1"). This helps users know when they have the latest updates.
+The app displays its version in the bottom right corner (e.g., "v1.0.3"). This helps users know when they have the latest updates.
+
+**Auto-Refresh on Updates:**
+The tracker automatically detects version changes and forces a refresh to ensure you're always running the latest version. When a new version is deployed:
+1. The app checks the version on load
+2. If a new version is detected, it shows "Updating to vX.X.X..."
+3. The page automatically reloads with fresh files
+4. No manual refresh needed!
+
+This eliminates cache issues and ensures everyone gets updates immediately.
 
 **For Developers: Updating the Version**
 
 When deploying changes:
 
 1. Open `js/version.js`
-2. Update the `APP_VERSION` constant (e.g., `'1.0.1'` → `'1.0.2'`)
+2. Update the `APP_VERSION` constant (e.g., `'1.0.2'` → `'1.0.3'`)
 3. Update version query strings in `index.html`:
-   - Find all `?v=1.0.1` in CSS and JS file references
-   - Change to `?v=1.0.2` (match your new version)
+   - Find all `?v=1.0.2` in CSS and JS file references
+   - Change to `?v=1.0.3` (match your new version)
+   - Or use: `sed -i 's/?v=1\.0\.2/?v=1.0.3/g' index.html`
 4. Commit and push to GitHub
 5. GitHub Pages will rebuild with the new version
+6. Users will auto-refresh when they next visit
 
 **Version Numbering:**
 - `X.0.0` - Major changes or rewrites
 - `0.X.0` - New features
 - `0.0.X` - Bug fixes and minor updates
 
-**Cache Busting:**
-The version query strings (e.g., `main.css?v=1.0.1`) force browsers to download new files instead of using cached old versions. This ensures users always get the latest updates.
+**How It Works:**
+- Version stored in localStorage: `enablement_app_version`
+- On each page load, compares current vs. stored version
+- Version mismatch triggers automatic hard reload
+- Query strings (`?v=1.0.3`) force browsers to fetch new files
 
 ## Tips & Best Practices
 
