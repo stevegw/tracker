@@ -12,17 +12,23 @@ const AuthComponent = {
 
         if (this.currentUser) {
             this.showAuthenticatedUI();
+            // Load data from Supabase if already signed in
+            console.log('User already signed in, loading data from Supabase...');
+            await SupabaseSync.loadFromSupabase();
+            UIController.refresh();
         } else {
             this.showUnauthenticatedUI();
         }
 
         // Listen for auth state changes
-        supabaseClient.auth.onAuthStateChange((event, session) => {
+        supabaseClient.auth.onAuthStateChange(async (event, session) => {
             console.log('Auth state changed:', event);
 
             if (event === 'SIGNED_IN') {
                 this.currentUser = session.user;
                 this.showAuthenticatedUI();
+                // Load data from Supabase on sign in
+                await SupabaseSync.loadFromSupabase();
                 UIController.refresh();
             } else if (event === 'SIGNED_OUT') {
                 this.currentUser = null;
