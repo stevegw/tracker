@@ -278,15 +278,14 @@ This eliminates cache issues and ensures everyone gets updates immediately.
 
 When deploying changes:
 
-1. Open `js/version.js`
-2. Update the `APP_VERSION` constant (e.g., `'1.0.2'` → `'1.0.3'`)
-3. Update version query strings in `index.html`:
-   - Find all `?v=1.0.2` in CSS and JS file references
-   - Change to `?v=1.0.3` (match your new version)
-   - Or use: `sed -i 's/?v=1\.0\.2/?v=1.0.3/g' index.html`
-4. Commit and push to GitHub
-5. GitHub Pages will rebuild with the new version
-6. Users will auto-refresh when they next visit
+1. Open `version.json` and update the version number (e.g., `"1.0.9"` → `"1.0.10"`)
+2. Update version query strings in `index.html`:
+   - Find all `?v=1.0.9` in CSS and JS file references
+   - Change to `?v=1.0.10` (match your new version)
+   - Or use: `sed -i 's/?v=1\.0\.9/?v=1.0.10/g' index.html`
+3. Commit and push to GitHub
+4. GitHub Pages will rebuild with the new version
+5. Users will auto-refresh when they next visit - **even on mobile Safari!**
 
 **Version Numbering:**
 - `X.0.0` - Major changes or rewrites
@@ -294,10 +293,12 @@ When deploying changes:
 - `0.0.X` - Bug fixes and minor updates
 
 **How It Works:**
-- Version stored in localStorage: `enablement_app_version`
-- On each page load, compares current vs. stored version
+- Version stored in `version.json` on the server
+- On each page load, fetches version.json with `cache: 'no-cache'`
+- Compares server version vs. stored version in localStorage
 - Version mismatch triggers automatic hard reload
-- Query strings (`?v=1.0.3`) force browsers to fetch new files
+- Query strings (`?v=1.0.9`) force browsers to fetch new files
+- Works reliably even with aggressive mobile Safari caching!
 
 ## Tips & Best Practices
 

@@ -1,68 +1,79 @@
-// Version configuration
-const APP_VERSION = '1.0.8';
+// Version management - checks server for latest version
 const VERSION_STORAGE_KEY = 'enablement_app_version';
+const VERSION_CHECK_URL = './version.json';
 
-// Check if version has changed and force reload if needed
-function checkVersionAndReload() {
-    const storedVersion = localStorage.getItem(VERSION_STORAGE_KEY);
+// Check server for latest version and force reload if changed
+async function checkVersionAndReload() {
+    try {
+        // Fetch version from server with no-cache to bypass browser cache
+        const response = await fetch(VERSION_CHECK_URL + '?t=' + Date.now(), {
+            cache: 'no-cache',
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache'
+            }
+        });
 
-    console.log(`Current version: v${APP_VERSION}, Stored version: v${storedVersion || 'none'}`);
-
-    if (storedVersion && storedVersion !== APP_VERSION) {
-        console.log(`Version changed from v${storedVersion} to v${APP_VERSION} - forcing reload...`);
-
-        // Update stored version BEFORE reload to prevent infinite loop
-        localStorage.setItem(VERSION_STORAGE_KEY, APP_VERSION);
-
-        // Show brief notification before reload
-        const body = document.body;
-        if (body) {
-            const notice = document.createElement('div');
-            notice.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#3b82f6;color:white;padding:20px 30px;border-radius:8px;z-index:10000;font-size:14px;box-shadow:0 4px 6px rgba(0,0,0,0.1);';
-            notice.textContent = `Updating to v${APP_VERSION}...`;
-            body.appendChild(notice);
+        if (!response.ok) {
+            console.error('Failed to fetch version');
+            return false;
         }
 
-        // Delay reload slightly to show message
-        setTimeout(() => {
-            // Force hard reload to bypass cache
-            window.location.reload(true);
-        }, 500);
+        const data = await response.json();
+        const serverVersion = data.version;
+        const storedVersion = localStorage.getItem(VERSION_STORAGE_KEY);
 
-        return true;
+        console.log(`Server version: v${serverVersion}, Stored version: v${storedVersion || 'none'}`);
+
+        if (storedVersion && storedVersion !== serverVersion) {
+            console.log(`Version changed from v${storedVersion} to v${serverVersion} - forcing reload...`);
+
+            // Update stored version BEFORE reload to prevent infinite loop
+            localStorage.setItem(VERSION_STORAGE_KEY, serverVersion);
+
+            // Show brief notification before reload
+            const notice = document.createElement('div');
+            notice.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#3b82f6;color:white;padding:20px 30px;border-radius:8px;z-index:10000;font-size:14px;box-shadow:0 4px 6px rgba(0,0,0,0.1);';
+            notice.textContent = `Updating to v${serverVersion}...`;
+            document.body.appendChild(notice);
+
+            // Delay reload slightly to show message
+            setTimeout(() => {
+                // Force hard reload to bypass cache
+                window.location.reload(true);
+            }, 800);
+
+            return true;
+        }
+
+        // First time or same version - update storage and display
+        if (!storedVersion) {
+            console.log(`First run - storing version v${serverVersion}`);
+            localStorage.setItem(VERSION_STORAGE_KEY, serverVersion);
+        }
+
+        // Display current version
+        displayVersion(serverVersion);
+
+        return false;
+
+    } catch (error) {
+        console.error('Error checking version:', error);
+        return false;
     }
-
-    // First time or same version - update storage
-    if (!storedVersion) {
-        console.log(`First run - storing version v${APP_VERSION}`);
-        localStorage.setItem(VERSION_STORAGE_KEY, APP_VERSION);
-    }
-
-    return false;
 }
 
 // Display version in UI
-function displayVersion() {
+function displayVersion(version) {
     const versionEl = document.getElementById('app-version');
-    if (versionEl) {
-        versionEl.textContent = `v${APP_VERSION}`;
+    if (versionEl && version) {
+        versionEl.textContent = `v${version}`;
     }
 }
 
-// Check for updates
-function checkForUpdates() {
-    console.log(`Running Technical Enablement Tracker v${APP_VERSION}`);
-}
-
-// Initialize - check version first, then display
+// Initialize - check version on page load
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        if (!checkVersionAndReload()) {
-            displayVersion();
-        }
-    });
+    document.addEventListener('DOMContentLoaded', checkVersionAndReload);
 } else {
-    if (!checkVersionAndReload()) {
-        displayVersion();
-    }
+    checkVersionAndReload();
 }
