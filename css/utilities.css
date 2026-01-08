@@ -187,3 +187,26 @@
 .gap-md { gap: var(--spacing-md); }
 .gap-lg { gap: var(--spacing-lg); }
 .gap-xl { gap: var(--spacing-xl); }
+
+/* Version Display */
+.version-display {
+    position: fixed;
+    bottom: 12px;
+    right: 12px;
+    font-size: 10px;
+    color: var(--text-light);
+    background: var(--surface);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    z-index: 100;
+    user-select: none;
+    pointer-events: none;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.version-display:hover {
+    opacity: 1;
+}
