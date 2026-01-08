@@ -22,6 +22,14 @@ const HeaderComponent = {
                 : `${stats.currentStreak} days`;
             streakEl.textContent = streakText;
         }
+
+        // Update mobile sidebar stats attributes
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) {
+            sidebar.setAttribute('data-completion', `${stats.completionRate}%`);
+            const streakDays = stats.currentStreak === 1 ? '1 day' : `${stats.currentStreak} days`;
+            sidebar.setAttribute('data-streak', streakDays);
+        }
     },
 
     /**

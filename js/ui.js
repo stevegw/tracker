@@ -15,11 +15,48 @@ const UIController = {
         // Initialize filters
         this.initFilters();
 
+        // Initialize mobile menu
+        this.initMobileMenu();
+
         // Check for due date notifications
         this.checkDueDateNotifications();
 
         // Initial render
         this.applyFilters();
+    },
+
+    /**
+     * Initialize mobile menu
+     */
+    initMobileMenu() {
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('mobile-sidebar-overlay');
+
+        if (mobileMenuBtn && sidebar && overlay) {
+            // Toggle sidebar
+            mobileMenuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-open');
+                overlay.classList.toggle('active');
+            });
+
+            // Close sidebar when clicking overlay
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+            });
+
+            // Close sidebar when selecting a category on mobile
+            const categoryItems = sidebar.querySelectorAll('.category-item');
+            categoryItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('mobile-open');
+                        overlay.classList.remove('active');
+                    }
+                });
+            });
+        }
     },
 
     /**

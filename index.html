@@ -26,6 +26,7 @@
             </div>
         </div>
         <div class="header-actions">
+            <button class="btn btn-icon mobile-menu-btn" id="mobile-menu-btn" title="Menu">☰</button>
             <input type="text" id="search-input" class="search-input" placeholder="Search activities...">
             <button class="btn btn-primary" id="add-activity-btn">+ New Activity</button>
             <button class="btn btn-icon" id="stats-btn" title="Statistics">📊</button>
@@ -47,10 +48,13 @@
         <button class="btn btn-primary" id="auth-prompt-btn">Sign In to Get Started</button>
     </div>
 
+    <!-- Mobile Sidebar Overlay -->
+    <div class="mobile-sidebar-overlay" id="mobile-sidebar-overlay"></div>
+
     <!-- Main Layout -->
     <div class="main-layout">
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-section">
                 <h3 class="sidebar-title">Categories</h3>
                 <button class="btn btn-small btn-block" id="add-category-btn">+ Add Category</button>
