@@ -30,10 +30,11 @@ const UIController = {
      */
     initMobileMenu() {
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileCloseBtn = document.getElementById('mobile-sidebar-close');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('mobile-sidebar-overlay');
 
-        console.log('Initializing mobile menu...', { mobileMenuBtn, sidebar, overlay });
+        console.log('Initializing mobile menu...', { mobileMenuBtn, mobileCloseBtn, sidebar, overlay });
 
         if (mobileMenuBtn && sidebar && overlay) {
             // Toggle sidebar
@@ -50,6 +51,17 @@ const UIController = {
                 sidebar.classList.remove('mobile-open');
                 overlay.classList.remove('active');
             });
+
+            // Close sidebar when clicking close button
+            if (mobileCloseBtn) {
+                mobileCloseBtn.addEventListener('click', (e) => {
+                    console.log('Close button clicked');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    sidebar.classList.remove('mobile-open');
+                    overlay.classList.remove('active');
+                });
+            }
         } else {
             console.error('Mobile menu elements not found!', { mobileMenuBtn, sidebar, overlay });
         }

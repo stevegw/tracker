@@ -126,6 +126,29 @@ body {
     display: block;
 }
 
+/* Mobile Sidebar Close Button */
+.mobile-sidebar-close {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    font-size: 32px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    z-index: 1000;
+}
+
+.mobile-sidebar-close:hover {
+    color: var(--text-primary);
+}
+
 /* Sync Status */
 .sync-status-container {
     display: flex;
@@ -528,6 +551,11 @@ body {
 
     .sidebar.mobile-open {
         left: 0;
+    }
+
+    /* Show close button on mobile */
+    .mobile-sidebar-close {
+        display: block;
     }
 
     /* Add mobile stats to sidebar */

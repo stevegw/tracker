@@ -1,5 +1,5 @@
 // Version configuration
-const APP_VERSION = '1.0.4';
+const APP_VERSION = '1.0.5';
 const VERSION_STORAGE_KEY = 'enablement_app_version';
 
 // Check if version has changed and force reload if needed
