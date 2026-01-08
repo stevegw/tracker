@@ -4,6 +4,30 @@ const SupabaseSync = {
     syncInProgress: false,
 
     /**
+     * Convert camelCase to snake_case for database
+     */
+    toSnakeCase(obj) {
+        const snakeObj = {};
+        for (const key in obj) {
+            const snakeKey = key.replace(/([A-Z])/g, '_$1').toLowerCase();
+            snakeObj[snakeKey] = obj[key];
+        }
+        return snakeObj;
+    },
+
+    /**
+     * Convert snake_case to camelCase from database
+     */
+    toCamelCase(obj) {
+        const camelObj = {};
+        for (const key in obj) {
+            const camelKey = key.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
+            camelObj[camelKey] = obj[key];
+        }
+        return camelObj;
+    },
+
+    /**
      * Load all data from Supabase
      */
     async loadFromSupabase() {
@@ -31,13 +55,15 @@ const SupabaseSync = {
 
             if (actError) throw actError;
 
-            // Store in localStorage for offline access
+            // Convert snake_case to camelCase and store in localStorage
             if (categories) {
-                localStorage.setItem('enablement_categories', JSON.stringify(categories));
+                const camelCategories = categories.map(cat => this.toCamelCase(cat));
+                localStorage.setItem('enablement_categories', JSON.stringify(camelCategories));
             }
 
             if (activities) {
-                localStorage.setItem('enablement_activities', JSON.stringify(activities));
+                const camelActivities = activities.map(act => this.toCamelCase(act));
+                localStorage.setItem('enablement_activities', JSON.stringify(camelActivities));
             }
 
             console.log('Data loaded from Supabase');
@@ -57,8 +83,10 @@ const SupabaseSync = {
         if (!user) return;
 
         try {
+            // Convert to snake_case for database
+            const snakeCategory = this.toSnakeCase(category);
             const categoryData = {
-                ...category,
+                ...snakeCategory,
                 user_id: user.id
             };
 
@@ -70,7 +98,8 @@ const SupabaseSync = {
             if (error) throw error;
 
             console.log('Category saved to Supabase');
-            return data[0];
+            // Convert back to camelCase
+            return data[0] ? this.toCamelCase(data[0]) : null;
 
         } catch (error) {
             console.error('Error saving category:', error);
@@ -110,8 +139,10 @@ const SupabaseSync = {
         if (!user) return;
 
         try {
+            // Convert to snake_case for database
+            const snakeActivity = this.toSnakeCase(activity);
             const activityData = {
-                ...activity,
+                ...snakeActivity,
                 user_id: user.id
             };
 
@@ -123,7 +154,8 @@ const SupabaseSync = {
             if (error) throw error;
 
             console.log('Activity saved to Supabase');
-            return data[0];
+            // Convert back to camelCase
+            return data[0] ? this.toCamelCase(data[0]) : null;
 
         } catch (error) {
             console.error('Error saving activity:', error);
