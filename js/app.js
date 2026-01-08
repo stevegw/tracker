@@ -21,6 +21,10 @@ function initializeApp() {
     AuthComponent.init().then(() => {
         // Initialize UI Controller
         UIController.init();
+
+        // Check for first run and create welcome activities
+        checkFirstRunAndCreateWelcome();
+
         console.log('Technical Enablement Tracker - Ready!');
     });
 }
@@ -29,12 +33,112 @@ function initializeApp() {
 document.addEventListener('DOMContentLoaded', initializeApp);
 
 /**
- * Show welcome message for first-time users
+ * Check if this is the first run and create welcome activities
  */
-function showWelcomeMessage() {
-    setTimeout(() => {
-        UIController.showToast('Welcome! Start by creating a category and adding your first activity.', 'success');
-    }, 500);
+function checkFirstRunAndCreateWelcome() {
+    const activityModel = new ActivityModel();
+    const activities = activityModel.getAll();
+
+    // Only create welcome activities if there are no activities yet
+    if (activities.length === 0) {
+        const firstRun = localStorage.getItem('enablement_first_run');
+
+        if (firstRun !== 'false') {
+            createWelcomeActivities();
+            localStorage.setItem('enablement_first_run', 'false');
+
+            // Show welcome toast
+            setTimeout(() => {
+                UIController.showToast('👋 Welcome! These are sample activities. Try them out or delete them!', 'success');
+            }, 800);
+        }
+    }
+}
+
+/**
+ * Create welcome activities for first-time users
+ */
+function createWelcomeActivities() {
+    const activityModel = new ActivityModel();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Activity 1: Pending, due soon
+    activityModel.create({
+        title: 'Complete JavaScript tutorial',
+        description: 'Learn modern JavaScript ES6+ features',
+        categoryId: null,
+        status: 'not-started',
+        dueDate: today.getTime() + (2 * 24 * 60 * 60 * 1000), // 2 days from now
+        notes: 'Focus on async/await, promises, and arrow functions',
+        resources: [
+            { title: 'MDN JavaScript Guide', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide' }
+        ],
+        isWelcomeActivity: true
+    });
+
+    // Activity 2: In progress
+    activityModel.create({
+        title: 'Read AWS Well-Architected Framework',
+        description: 'Study the five pillars of AWS architecture',
+        categoryId: null,
+        status: 'in-progress',
+        dueDate: today.getTime() + (7 * 24 * 60 * 60 * 1000), // 7 days from now
+        notes: 'Currently on the Security pillar',
+        resources: [
+            { title: 'AWS Well-Architected', url: 'https://aws.amazon.com/architecture/well-architected/' }
+        ],
+        isWelcomeActivity: true
+    });
+
+    // Activity 3: Completed yesterday (builds streak!)
+    const completedActivity1 = activityModel.create({
+        title: 'Watch Docker crash course',
+        description: 'Learn containerization basics with Docker',
+        categoryId: null,
+        status: 'not-started',
+        dueDate: null,
+        notes: 'Great video! Now understand containers vs VMs',
+        resources: [
+            { title: 'Docker Getting Started', url: 'https://docs.docker.com/get-started/' }
+        ],
+        isWelcomeActivity: true
+    });
+    // Mark as completed yesterday
+    completedActivity1.status = 'completed';
+    completedActivity1.completedAt = today.getTime() - (24 * 60 * 60 * 1000); // Yesterday
+    activityModel.update(completedActivity1.id, completedActivity1);
+
+    // Activity 4: Pending
+    activityModel.create({
+        title: 'Practice Kubernetes deployments',
+        description: 'Deploy a sample app to a K8s cluster',
+        categoryId: null,
+        status: 'not-started',
+        dueDate: today.getTime() + (5 * 24 * 60 * 60 * 1000), // 5 days from now
+        notes: 'Use minikube for local testing',
+        resources: [],
+        isWelcomeActivity: true
+    });
+
+    // Activity 5: Completed 2 days ago
+    const completedActivity2 = activityModel.create({
+        title: 'Review system design patterns',
+        description: 'Study common architectural patterns',
+        categoryId: null,
+        status: 'not-started',
+        dueDate: null,
+        notes: 'Covered: Load Balancing, Caching, Message Queues',
+        resources: [],
+        isWelcomeActivity: true
+    });
+    // Mark as completed 2 days ago
+    completedActivity2.status = 'completed';
+    completedActivity2.completedAt = today.getTime() - (2 * 24 * 60 * 60 * 1000); // 2 days ago
+    activityModel.update(completedActivity2.id, completedActivity2);
+
+    console.log('Welcome activities created!');
+    UIController.refresh();
 }
 
 /**

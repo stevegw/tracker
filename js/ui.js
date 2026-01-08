@@ -9,6 +9,7 @@ const UIController = {
         HeaderComponent.init();
         HeaderComponent.initSettings();
         SidebarComponent.init();
+        CommandBarComponent.init();
         ActivityFormComponent.init();
         StatsDashboardComponent.init();
 
@@ -17,6 +18,9 @@ const UIController = {
 
         // Initialize mobile menu
         this.initMobileMenu();
+
+        // Initialize keyboard shortcuts
+        this.initKeyboardShortcuts();
 
         // Check for due date notifications
         this.checkDueDateNotifications();
@@ -124,6 +128,27 @@ const UIController = {
                 this.applyFilters();
             });
         }
+    },
+
+    /**
+     * Initialize keyboard shortcuts
+     */
+    initKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            // Ctrl+K or Cmd+K - Focus command bar
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                CommandBarComponent.focus();
+                return;
+            }
+
+            // "/" key - Focus command bar (unless in input/textarea)
+            if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+                e.preventDefault();
+                CommandBarComponent.focus();
+                return;
+            }
+        });
     },
 
     /**

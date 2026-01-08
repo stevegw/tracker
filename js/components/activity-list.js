@@ -35,6 +35,7 @@ const ActivityListComponent = {
     createActivityCard(activity) {
         const card = document.createElement('div');
         card.className = 'activity-card';
+        card.dataset.activityId = activity.id;
 
         // Get category info
         const categoryModel = new CategoryModel();
@@ -201,6 +202,21 @@ const ActivityListComponent = {
             'in-progress': 'started',
             'completed': 'completed'
         };
+
+        // Celebrate if marking as completed!
+        if (newStatus === 'completed') {
+            // Find the activity card element for animation
+            const activityCard = document.querySelector(`[data-activity-id="${activityId}"]`);
+
+            // Trigger celebration
+            CelebrationComponent.celebrate(activityCard);
+
+            // Check for streak milestone
+            const stats = activityModel.getStats();
+            if (stats.currentStreak > 0) {
+                CelebrationComponent.celebrateStreak(stats.currentStreak);
+            }
+        }
 
         UIController.showToast(`Activity ${statusLabels[newStatus]}`, 'success');
         UIController.refresh();

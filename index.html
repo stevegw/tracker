@@ -7,9 +7,9 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Technical Enablement Tracker</title>
-    <link rel="stylesheet" href="css/main.css?v=1.0.10">
-    <link rel="stylesheet" href="css/components.css?v=1.0.10">
-    <link rel="stylesheet" href="css/utilities.css?v=1.0.10">
+    <link rel="stylesheet" href="css/main.css?v=1.0.11">
+    <link rel="stylesheet" href="css/components.css?v=1.0.11">
+    <link rel="stylesheet" href="css/utilities.css?v=1.0.11">
 </head>
 <body>
     <!-- Header -->
@@ -73,6 +73,23 @@
 
         <!-- Main Content -->
         <main class="main-content">
+            <!-- Smart Command Bar -->
+            <div class="command-bar-container">
+                <div class="command-bar">
+                    <input
+                        type="text"
+                        id="command-bar-input"
+                        class="command-bar-input"
+                        placeholder="✨ Type to add: 'Deploy app by Friday @aws' or press / to focus..."
+                        autocomplete="off"
+                        spellcheck="false">
+                    <div id="command-bar-suggestions" class="command-suggestions"></div>
+                </div>
+                <p class="command-bar-hint">
+                    Try: <code>@category</code> for categories • <code>tomorrow</code> or <code>Friday</code> for due dates • <code>Enter</code> to create
+                </p>
+            </div>
+
             <!-- Filters -->
             <div class="filters">
                 <div class="filter-group">
@@ -337,20 +354,24 @@
     <!-- Scripts -->
     <!-- Supabase JS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
-    <script src="js/version.js?v=1.0.10"></script>
-    <script src="js/utils.js?v=1.0.10"></script>
-    <script src="js/storage.js?v=1.0.10"></script>
-    <script src="js/supabase-client.js?v=1.0.10"></script>
-    <script src="js/models.js?v=1.0.10"></script>
-    <script src="js/supabase-sync.js?v=1.0.10"></script>
-    <script src="js/components/auth.js?v=1.0.10"></script>
-    <script src="js/components/header.js?v=1.0.10"></script>
-    <script src="js/components/sidebar.js?v=1.0.10"></script>
-    <script src="js/components/activity-list.js?v=1.0.10"></script>
-    <script src="js/components/activity-form.js?v=1.0.10"></script>
-    <script src="js/components/stats-dashboard.js?v=1.0.10"></script>
-    <script src="js/ui.js?v=1.0.10"></script>
-    <script src="js/app.js?v=1.0.10"></script>
+    <script src="js/version.js?v=1.0.11"></script>
+    <script src="js/utils.js?v=1.0.11"></script>
+    <script src="js/storage.js?v=1.0.11"></script>
+    <script src="js/supabase-client.js?v=1.0.11"></script>
+    <script src="js/models.js?v=1.0.11"></script>
+    <script src="js/supabase-sync.js?v=1.0.11"></script>
+    <script src="js/components/auth.js?v=1.0.11"></script>
+    <script src="js/components/command-bar.js?v=1.0.11"></script>
+    <script src="js/components/celebrations.js?v=1.0.11"></script>
+    <script src="js/components/header.js?v=1.0.11"></script>
+    <script src="js/components/sidebar.js?v=1.0.11"></script>
+    <script src="js/components/activity-list.js?v=1.0.11"></script>
+    <script src="js/components/activity-form.js?v=1.0.11"></script>
+    <script src="js/components/stats-dashboard.js?v=1.0.11"></script>
+    <script src="js/ui.js?v=1.0.11"></script>
+    <script src="js/app.js?v=1.0.11"></script>
 </body>
 </html>
