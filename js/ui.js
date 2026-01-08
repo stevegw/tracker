@@ -40,9 +40,17 @@ const UIController = {
             // Toggle sidebar
             mobileMenuBtn.addEventListener('click', (e) => {
                 console.log('Mobile menu button clicked');
+                console.log('Sidebar element:', sidebar);
+                console.log('Sidebar classes BEFORE:', sidebar.className);
+                console.log('Overlay classes BEFORE:', overlay.className);
+
                 e.preventDefault();
                 sidebar.classList.toggle('mobile-open');
                 overlay.classList.toggle('active');
+
+                console.log('Sidebar classes AFTER:', sidebar.className);
+                console.log('Overlay classes AFTER:', overlay.className);
+                console.log('Sidebar computed style left:', window.getComputedStyle(sidebar).left);
             });
 
             // Close sidebar when clicking overlay
