@@ -213,13 +213,13 @@ const CommandBarComponent = {
             const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
             const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
-            const newCategory = {
-                name: parsed.newCategoryName,
-                description: `Auto-created from @${parsed.newCategoryName.replace(/\s+/g, '-')}`,
-                color: randomColor
-            };
+            // CategoryModel.create expects (name, description, color) as separate params
+            const created = categoryModel.create(
+                parsed.newCategoryName,
+                `Auto-created from @${parsed.newCategoryName.replace(/\s+/g, '-')}`,
+                randomColor
+            );
 
-            const created = await categoryModel.create(newCategory);
             if (created) {
                 parsed.categoryId = created.id;
                 UIController.showToast(`Category "${created.name}" created`, 'success');
