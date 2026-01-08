@@ -103,7 +103,8 @@ const CommandBarComponent = {
         const categoryMatch = text.match(/@([\w-]+)/);
         if (categoryMatch) {
             const categoryName = categoryMatch[1];
-            const categories = CategoryModel.getAll();
+            const categoryModel = new CategoryModel();
+            const categories = categoryModel.getAll();
             const matchedCategory = categories.find(c =>
                 c.name.toLowerCase().replace(/\s+/g, '-') === categoryName.toLowerCase()
             );
@@ -259,7 +260,8 @@ const CommandBarComponent = {
         const lastAtIndex = text.lastIndexOf('@');
         const searchTerm = text.substring(lastAtIndex + 1).toLowerCase();
 
-        const categories = CategoryModel.getAll();
+        const categoryModel = new CategoryModel();
+        const categories = categoryModel.getAll();
         const matches = categories.filter(cat =>
             cat.name.toLowerCase().includes(searchTerm)
         );
