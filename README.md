@@ -10,103 +10,69 @@ A vanilla JavaScript web application for tracking technical enablement activitie
 - **Due Dates**: Set deadlines with visual indicators for overdue and upcoming tasks
 - **Notes & Resources**: Add notes and resource links to each activity
 - **Search & Filtering**: Quickly find activities by keywords, category, status, or due date
-- **Cloud Sync**: Automatically sync your data across devices using Google Drive
+- **Cloud Sync**: Automatically sync your data across devices using Supabase
+- **User Authentication**: Simple email/password authentication
 - **Data Management**: Export and import your data as JSON files
 - **Browser Notifications**: Get notified about overdue and upcoming activities
-- **Local Storage**: All data persists in your browser's localStorage
+- **Mobile Responsive**: Optimized for phone, tablet, and desktop
+- **Version Display**: Always know which version you're running
+- **Local Storage**: All data persists in your browser's localStorage with cloud backup
 
 ## Cross-Device Sync
 
-The tracker includes Google Drive integration to automatically sync your data across all your devices (phone, tablet, desktop).
+The tracker uses Supabase for automatic cloud sync, allowing you to access your data from any device (phone, tablet, desktop).
 
-### Setting Up Google Drive Sync
+### How Cloud Sync Works
 
-**Step 1: Create Google Cloud Project**
+- **Sign Up/Sign In**: Create an account with your email and password
+- **Automatic Sync**: All changes are automatically saved to the cloud
+- **Cross-Device**: Sign in on any device to access your data
+- **Local + Cloud**: Data is stored both locally (for offline access) and in the cloud
+- **Secure**: Your data is protected with Row Level Security (RLS)
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project (e.g., "Enablement Tracker")
-3. Select your project from the dropdown
+### Using the Tracker
 
-**Step 2: Enable Google Drive API**
+**First Time Use:**
+1. Open the tracker at https://stevegw.github.io/tracker
+2. Click "Sign In" or use the sign-in button
+3. Click "Sign up" to create a new account
+4. Enter your email and password
+5. You'll be automatically signed in and can start tracking
 
-1. In your project, go to "APIs & Services" > "Library"
-2. Search for "Google Drive API"
-3. Click on it and click "Enable"
-
-**Step 3: Create API Credentials**
-
-1. Go to "APIs & Services" > "Credentials"
-2. Click "Create Credentials" > "API Key"
-3. Copy the API Key and save it somewhere safe
-4. Click "Create Credentials" > "OAuth 2.0 Client ID"
-5. If prompted, configure the OAuth consent screen:
-   - Choose "External" user type
-   - Fill in required fields (app name, support email)
-   - Add your email as a test user
-   - Save and continue through the steps
-6. Back in "Create OAuth Client ID":
-   - Application type: "Web application"
-   - Add authorized JavaScript origins: `http://localhost` or your domain
-   - Click "Create"
-7. Copy the Client ID and save it
-
-**Step 4: Configure in the Tracker**
-
-1. Open your enablement tracker
-2. Click the ⚙️ settings icon
-3. In the "Cloud Sync (Google Drive)" section:
-   - Paste your **Client ID**
-   - Paste your **API Key**
-   - Check "Auto-sync on changes" (recommended)
-   - Click "Save Configuration"
-
-**Step 5: Connect to Google Drive**
-
-1. Click "Connect to Google Drive"
-2. Sign in with your Google account
-3. Grant permissions when prompted
-4. Your data will automatically sync to Google Drive
-
-### Using Cloud Sync
-
-Once configured:
-
-- **Automatic Sync**: Changes are automatically saved to Google Drive within 2 seconds
-- **Cross-Device**: Open the tracker on any device, sign in, and your data syncs
-- **Conflict Resolution**: If data exists on both cloud and local, you'll be asked which to keep
-- **Manual Sync**: Click "Sync Now" in settings to force an immediate sync
-- **Sync Status**: Check the top of the page to see when you last synced
-
-### First Time on a New Device
-
+**On Additional Devices:**
 1. Open the tracker on your new device
-2. Go to Settings > Cloud Sync
-3. Enter the same Client ID and API Key
-4. Click "Save Configuration"
-5. Click "Connect to Google Drive"
-6. Sign in with the same Google account
-7. Your data will automatically load from the cloud
+2. Click "Sign In"
+3. Enter the same email and password
+4. Your data will automatically load
 
-### Troubleshooting Sync
+**Offline Access:**
+- All data is cached locally in your browser
+- You can use the tracker without an internet connection
+- Changes sync automatically when you're back online
 
-**"Cloud sync not configured" error:**
-- Make sure you entered both Client ID and API Key correctly
-- Click "Save Configuration" after entering credentials
+### Data Privacy & Security
 
-**"Authentication failed" error:**
-- Check that your Google Cloud project is set up correctly
-- Ensure you added yourself as a test user in OAuth consent screen
-- Try disconnecting and reconnecting
+- **Authentication**: Supabase handles secure email/password authentication
+- **Row Level Security**: You can only access your own data
+- **Local Backup**: Data is always stored locally as a backup
+- **No Sharing**: Your data is private and never shared
+
+### Troubleshooting
+
+**Can't sign in:**
+- Check that you're using the correct email and password
+- Passwords are case-sensitive
+- Check browser console (F12) for error messages
 
 **Data not syncing:**
-- Check the sync status in the header
-- Make sure "Auto-sync on changes" is enabled
-- Try clicking "Sync Now" manually
-- Check browser console for errors
+- Make sure you're signed in (check for your email in the header)
+- Check your internet connection
+- Try signing out and back in
 
-**"Quota exceeded" error:**
-- Google Drive has daily API limits for free projects
-- Wait 24 hours or upgrade your Google Cloud project
+**Lost password:**
+- Currently, password reset must be done manually
+- Contact support or create a new account
+- Always export your data as a backup!
 
 ## Getting Started
 
@@ -278,11 +244,15 @@ tracker/
 │   └── utilities.css      # Utility classes
 ├── js/
 │   ├── app.js             # Application entry point
+│   ├── version.js         # Version management
 │   ├── storage.js         # localStorage wrapper
+│   ├── supabase-client.js # Supabase configuration
+│   ├── supabase-sync.js   # Cloud sync logic
 │   ├── models.js          # Data models and business logic
 │   ├── ui.js              # UI controller
 │   ├── utils.js           # Helper functions
 │   └── components/
+│       ├── auth.js        # Authentication UI
 │       ├── header.js      # Header component
 │       ├── sidebar.js     # Sidebar navigation
 │       ├── activity-list.js   # Activity list rendering
@@ -290,6 +260,30 @@ tracker/
 │       └── stats-dashboard.js # Statistics dashboard
 └── README.md              # This file
 ```
+
+### Version Management
+
+The app displays its version in the bottom right corner (e.g., "v1.0.1"). This helps users know when they have the latest updates.
+
+**For Developers: Updating the Version**
+
+When deploying changes:
+
+1. Open `js/version.js`
+2. Update the `APP_VERSION` constant (e.g., `'1.0.1'` → `'1.0.2'`)
+3. Update version query strings in `index.html`:
+   - Find all `?v=1.0.1` in CSS and JS file references
+   - Change to `?v=1.0.2` (match your new version)
+4. Commit and push to GitHub
+5. GitHub Pages will rebuild with the new version
+
+**Version Numbering:**
+- `X.0.0` - Major changes or rewrites
+- `0.X.0` - New features
+- `0.0.X` - Bug fixes and minor updates
+
+**Cache Busting:**
+The version query strings (e.g., `main.css?v=1.0.1`) force browsers to download new files instead of using cached old versions. This ensures users always get the latest updates.
 
 ## Tips & Best Practices
 
@@ -320,10 +314,12 @@ tracker/
 
 ## Privacy & Security
 
-- All data stays in your browser - nothing is sent to any server
-- No tracking, no analytics, no external dependencies
-- Your data is as secure as your browser's localStorage
-- Export your data to create backups and ensure you don't lose anything
+- **Data Storage**: Your data is stored locally in your browser and synced to Supabase cloud
+- **Authentication**: Secure email/password authentication via Supabase
+- **Row Level Security**: Database policies ensure you can only access your own data
+- **No Tracking**: No analytics, no tracking scripts, no third-party services
+- **Open Source**: All code is visible in the repository
+- **Backups**: Always export your data regularly as a backup
 
 ## Future Enhancements
 
@@ -334,8 +330,11 @@ Possible features to add:
 - Pomodoro timer integration
 - Export to CSV/PDF
 - Keyboard shortcuts
-- Mobile responsive improvements
 - Service Worker for offline support
+- Password reset functionality
+- Email verification
+- Activity templates
+- Bulk edit operations
 
 ## License
 
