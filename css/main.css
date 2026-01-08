@@ -598,3 +598,44 @@ body {
         font-size: 10px;
     }
 }
+
+/* Font Size Options */
+body.font-large {
+    font-size: 16px;
+}
+
+body.font-large .header-title {
+    font-size: 22px;
+}
+
+body.font-large .btn {
+    font-size: 14px;
+    padding: 10px 18px;
+}
+
+body.font-large .form-input,
+body.font-large .form-textarea,
+body.font-large .form-select {
+    font-size: 15px;
+    padding: 10px 14px;
+}
+
+body.font-xlarge {
+    font-size: 18px;
+}
+
+body.font-xlarge .header-title {
+    font-size: 24px;
+}
+
+body.font-xlarge .btn {
+    font-size: 16px;
+    padding: 12px 20px;
+}
+
+body.font-xlarge .form-input,
+body.font-xlarge .form-textarea,
+body.font-xlarge .form-select {
+    font-size: 17px;
+    padding: 12px 16px;
+}

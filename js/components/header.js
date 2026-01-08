@@ -97,6 +97,12 @@ const HeaderComponent = {
             notificationsToggle.checked = settings.notificationsEnabled;
         }
 
+        // Update font size select
+        const fontSizeSelect = document.getElementById('font-size-select');
+        if (fontSizeSelect) {
+            fontSizeSelect.value = settings.fontSize || 'normal';
+        }
+
         modal.classList.add('active');
     },
 
@@ -219,6 +225,35 @@ const HeaderComponent = {
                     UIController.showToast('Notifications disabled', 'success');
                 }
             });
+        }
+
+        // Font size selector
+        const fontSizeSelect = document.getElementById('font-size-select');
+        if (fontSizeSelect) {
+            fontSizeSelect.addEventListener('change', (e) => {
+                const fontSize = e.target.value;
+                const settings = Storage.getSettings();
+                settings.fontSize = fontSize;
+                Storage.saveSettings(settings);
+                this.applyFontSize(fontSize);
+                UIController.showToast('Text size updated', 'success');
+            });
+        }
+
+        // Apply saved font size on load
+        const settings = Storage.getSettings();
+        this.applyFontSize(settings.fontSize || 'normal');
+    },
+
+    /**
+     * Apply font size to body
+     */
+    applyFontSize(fontSize) {
+        document.body.classList.remove('font-large', 'font-xlarge');
+        if (fontSize === 'large') {
+            document.body.classList.add('font-large');
+        } else if (fontSize === 'xlarge') {
+            document.body.classList.add('font-xlarge');
         }
     }
 };

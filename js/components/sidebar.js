@@ -63,6 +63,7 @@ const SidebarComponent = {
             this.currentCategoryId = category.id;
             this.updateActiveState();
             UIController.applyFilters();
+            UIController.closeMobileSidebar();
         });
 
         return item;
@@ -189,6 +190,7 @@ const SidebarComponent = {
                 this.currentCategoryId = 'all';
                 this.updateActiveState();
                 UIController.applyFilters();
+                UIController.closeMobileSidebar();
             });
         }
 

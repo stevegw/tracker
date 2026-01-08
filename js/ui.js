@@ -33,29 +33,39 @@ const UIController = {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('mobile-sidebar-overlay');
 
+        console.log('Initializing mobile menu...', { mobileMenuBtn, sidebar, overlay });
+
         if (mobileMenuBtn && sidebar && overlay) {
             // Toggle sidebar
-            mobileMenuBtn.addEventListener('click', () => {
+            mobileMenuBtn.addEventListener('click', (e) => {
+                console.log('Mobile menu button clicked');
+                e.preventDefault();
                 sidebar.classList.toggle('mobile-open');
                 overlay.classList.toggle('active');
             });
 
             // Close sidebar when clicking overlay
             overlay.addEventListener('click', () => {
+                console.log('Overlay clicked');
                 sidebar.classList.remove('mobile-open');
                 overlay.classList.remove('active');
             });
+        } else {
+            console.error('Mobile menu elements not found!', { mobileMenuBtn, sidebar, overlay });
+        }
+    },
 
-            // Close sidebar when selecting a category on mobile
-            const categoryItems = sidebar.querySelectorAll('.category-item');
-            categoryItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    if (window.innerWidth <= 768) {
-                        sidebar.classList.remove('mobile-open');
-                        overlay.classList.remove('active');
-                    }
-                });
-            });
+    /**
+     * Close mobile sidebar (call this when category is clicked)
+     */
+    closeMobileSidebar() {
+        if (window.innerWidth <= 768) {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobile-sidebar-overlay');
+            if (sidebar && overlay) {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+            }
         }
     },
 

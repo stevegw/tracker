@@ -1,5 +1,5 @@
 // Version configuration
-const APP_VERSION = '1.0.1';
+const APP_VERSION = '1.0.2';
 
 // Display version in UI
 function displayVersion() {

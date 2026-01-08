@@ -44,7 +44,8 @@ const Storage = {
         const data = localStorage.getItem(STORAGE_KEYS.SETTINGS);
         return data ? JSON.parse(data) : {
             notificationsEnabled: false,
-            lastBackupPrompt: null
+            lastBackupPrompt: null,
+            fontSize: 'normal' // 'normal', 'large', 'xlarge'
         };
     },
 
