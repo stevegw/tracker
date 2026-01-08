@@ -5,24 +5,51 @@ const SupabaseSync = {
 
     /**
      * Convert camelCase to snake_case for database
+     * Also converts timestamp numbers to ISO strings
      */
     toSnakeCase(obj) {
         const snakeObj = {};
         for (const key in obj) {
             const snakeKey = key.replace(/([A-Z])/g, '_$1').toLowerCase();
-            snakeObj[snakeKey] = obj[key];
+            let value = obj[key];
+
+            // Convert timestamp numbers to ISO strings for PostgreSQL
+            if (typeof value === 'number' && (key.endsWith('At') || key === 'dueDate')) {
+                value = new Date(value).toISOString();
+            }
+
+            snakeObj[snakeKey] = value;
         }
         return snakeObj;
     },
 
     /**
      * Convert snake_case to camelCase from database
+     * Also converts ISO timestamp strings back to numbers
      */
     toCamelCase(obj) {
         const camelObj = {};
         for (const key in obj) {
             const camelKey = key.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
-            camelObj[camelKey] = obj[key];
+            let value = obj[key];
+
+            // Convert ISO timestamp strings back to numbers for JavaScript
+            if (typeof value === 'string' && camelKey.endsWith('At')) {
+                const timestamp = new Date(value).getTime();
+                if (!isNaN(timestamp)) {
+                    value = timestamp;
+                }
+            }
+
+            // Convert due_date ISO string to timestamp
+            if (key === 'due_date' && typeof value === 'string' && value) {
+                const timestamp = new Date(value).getTime();
+                if (!isNaN(timestamp)) {
+                    value = timestamp;
+                }
+            }
+
+            camelObj[camelKey] = value;
         }
         return camelObj;
     },
