@@ -61,24 +61,23 @@ const ActivityListComponent = {
 
         card.innerHTML = `
             <div class="activity-card-header">
-                <div>
+                <div style="flex: 1;">
                     <h3 class="activity-card-title">${escapeHTML(activity.title)}</h3>
                     ${activity.description ? `<p class="activity-card-description">${escapeHTML(activity.description)}</p>` : ''}
                 </div>
             </div>
             <div class="activity-card-meta">
                 ${badges}
+                ${activity.timeSpent > 0 ? `<span class="activity-time">⏱️ ${formatTimeSpent(activity.timeSpent)}</span>` : ''}
+                <div class="activity-card-menu">
+                    <button class="activity-menu-btn" onclick="ActivityListComponent.toggleMenu('${activity.id}')">⋮</button>
+                    <div class="activity-menu-dropdown" id="menu-${activity.id}">
+                        ${this.createMenuItems(activity)}
+                    </div>
+                </div>
             </div>
             ${notesHtml}
             ${resourcesHtml}
-            <div class="activity-card-footer">
-                <span class="activity-time">
-                    ${activity.timeSpent > 0 ? `⏱️ ${formatTimeSpent(activity.timeSpent)}` : ''}
-                </span>
-                <div class="activity-card-actions">
-                    ${this.createActionButtons(activity)}
-                </div>
-            </div>
         `;
 
         return card;
@@ -151,43 +150,70 @@ const ActivityListComponent = {
     },
 
     /**
-     * Create action buttons for activity card
+     * Create menu items for activity card
      */
-    createActionButtons(activity) {
-        const buttons = [];
+    createMenuItems(activity) {
+        const items = [];
 
-        // Status change buttons
+        // Status change options
         if (activity.status !== 'completed') {
-            buttons.push(`
-                <button onclick="ActivityListComponent.updateActivityStatus('${activity.id}', 'completed')">
-                    ✓ Complete
+            items.push(`
+                <button class="menu-item" onclick="ActivityListComponent.updateActivityStatus('${activity.id}', 'completed'); ActivityListComponent.closeMenu('${activity.id}')">
+                    ✓ Mark Complete
                 </button>
             `);
         }
 
         if (activity.status === 'not-started') {
-            buttons.push(`
-                <button onclick="ActivityListComponent.updateActivityStatus('${activity.id}', 'in-progress')">
+            items.push(`
+                <button class="menu-item" onclick="ActivityListComponent.updateActivityStatus('${activity.id}', 'in-progress'); ActivityListComponent.closeMenu('${activity.id}')">
                     ▶ Start
                 </button>
             `);
         }
 
-        // Edit button
-        buttons.push(`
-            <button onclick="ActivityFormComponent.show('${activity.id}')">
+        // Edit option
+        items.push(`
+            <button class="menu-item" onclick="ActivityFormComponent.show('${activity.id}'); ActivityListComponent.closeMenu('${activity.id}')">
                 ✏️ Edit
             </button>
         `);
 
-        // Delete button
-        buttons.push(`
-            <button onclick="ActivityListComponent.deleteActivity('${activity.id}')">
+        // Delete option
+        items.push(`
+            <button class="menu-item menu-item-danger" onclick="ActivityListComponent.deleteActivity('${activity.id}')">
                 🗑️ Delete
             </button>
         `);
 
-        return buttons.join('');
+        return items.join('');
+    },
+
+    /**
+     * Toggle menu dropdown
+     */
+    toggleMenu(activityId) {
+        const menu = document.getElementById(`menu-${activityId}`);
+        if (!menu) return;
+
+        // Close all other menus
+        document.querySelectorAll('.activity-menu-dropdown.active').forEach(m => {
+            if (m.id !== `menu-${activityId}`) {
+                m.classList.remove('active');
+            }
+        });
+
+        menu.classList.toggle('active');
+    },
+
+    /**
+     * Close menu dropdown
+     */
+    closeMenu(activityId) {
+        const menu = document.getElementById(`menu-${activityId}`);
+        if (menu) {
+            menu.classList.remove('active');
+        }
     },
 
     /**

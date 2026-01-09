@@ -22,6 +22,9 @@ const UIController = {
         // Initialize keyboard shortcuts
         this.initKeyboardShortcuts();
 
+        // Initialize click outside handler for menus
+        this.initClickOutsideHandler();
+
         // Check for due date notifications
         this.checkDueDateNotifications();
 
@@ -147,6 +150,20 @@ const UIController = {
                 e.preventDefault();
                 CommandBarComponent.focus();
                 return;
+            }
+        });
+    },
+
+    /**
+     * Initialize click outside handler for activity menus
+     */
+    initClickOutsideHandler() {
+        document.addEventListener('click', (e) => {
+            // Close activity menus when clicking outside
+            if (!e.target.closest('.activity-card-menu')) {
+                document.querySelectorAll('.activity-menu-dropdown.active').forEach(menu => {
+                    menu.classList.remove('active');
+                });
             }
         });
     },
