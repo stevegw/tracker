@@ -648,6 +648,28 @@ body.font-small .form-select {
     padding: 8px 12px;
 }
 
+body.font-small .activity-card-title {
+    font-size: 13px;
+}
+
+body.font-small .activity-card-description,
+body.font-small .activity-notes {
+    font-size: 11px;
+}
+
+body.font-small .activity-badge {
+    font-size: 9px;
+}
+
+body.font-small .sidebar-title,
+body.font-small .category-name {
+    font-size: 12px;
+}
+
+body.font-small .command-bar-input {
+    font-size: 14px;
+}
+
 body.font-large {
     font-size: 16px;
 }
@@ -666,6 +688,28 @@ body.font-large .form-textarea,
 body.font-large .form-select {
     font-size: 16px;
     padding: 10px 14px;
+}
+
+body.font-large .activity-card-title {
+    font-size: 16px;
+}
+
+body.font-large .activity-card-description,
+body.font-large .activity-notes {
+    font-size: 14px;
+}
+
+body.font-large .activity-badge {
+    font-size: 12px;
+}
+
+body.font-large .sidebar-title,
+body.font-large .category-name {
+    font-size: 14px;
+}
+
+body.font-large .command-bar-input {
+    font-size: 17px;
 }
 
 body.font-xlarge {
@@ -688,6 +732,28 @@ body.font-xlarge .form-select {
     padding: 12px 16px;
 }
 
+body.font-xlarge .activity-card-title {
+    font-size: 18px;
+}
+
+body.font-xlarge .activity-card-description,
+body.font-xlarge .activity-notes {
+    font-size: 15px;
+}
+
+body.font-xlarge .activity-badge {
+    font-size: 13px;
+}
+
+body.font-xlarge .sidebar-title,
+body.font-xlarge .category-name {
+    font-size: 15px;
+}
+
+body.font-xlarge .command-bar-input {
+    font-size: 19px;
+}
+
 body.font-xxlarge {
     font-size: 20px;
 }
@@ -708,6 +774,28 @@ body.font-xxlarge .form-select {
     padding: 14px 18px;
 }
 
+body.font-xxlarge .activity-card-title {
+    font-size: 20px;
+}
+
+body.font-xxlarge .activity-card-description,
+body.font-xxlarge .activity-notes {
+    font-size: 17px;
+}
+
+body.font-xxlarge .activity-badge {
+    font-size: 14px;
+}
+
+body.font-xxlarge .sidebar-title,
+body.font-xxlarge .category-name {
+    font-size: 17px;
+}
+
+body.font-xxlarge .command-bar-input {
+    font-size: 21px;
+}
+
 body.font-xxxlarge {
     font-size: 22px;
 }
@@ -726,4 +814,26 @@ body.font-xxxlarge .form-textarea,
 body.font-xxxlarge .form-select {
     font-size: 22px;
     padding: 16px 20px;
+}
+
+body.font-xxxlarge .activity-card-title {
+    font-size: 22px;
+}
+
+body.font-xxxlarge .activity-card-description,
+body.font-xxxlarge .activity-notes {
+    font-size: 19px;
+}
+
+body.font-xxxlarge .activity-badge {
+    font-size: 16px;
+}
+
+body.font-xxxlarge .sidebar-title,
+body.font-xxxlarge .category-name {
+    font-size: 19px;
+}
+
+body.font-xxxlarge .command-bar-input {
+    font-size: 23px;
 }
