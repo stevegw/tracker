@@ -244,10 +244,8 @@ const CommandBarComponent = {
             UIController.showToast('Activity created!', 'success');
             this.clearInput();
 
-            // Refresh the activity list
-            if (window.ActivityListComponent) {
-                await ActivityListComponent.render();
-            }
+            // Refresh everything (sidebar, header stats, activity list)
+            UIController.refresh();
         } else {
             UIController.showToast('Error creating activity', 'error');
         }
