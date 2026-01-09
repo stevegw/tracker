@@ -89,11 +89,10 @@ const ActivityListComponent = {
     createBadges(activity, category) {
         const badges = [];
 
-        // Category badge
+        // Category badge (visual tag with color)
         if (category) {
             badges.push(`
-                <span class="activity-badge badge-category">
-                    <span class="category-color" style="background-color: ${category.color}"></span>
+                <span class="activity-badge badge-category" style="background: ${category.color}20; color: ${category.color}; border: 1.5px solid ${category.color};">
                     ${escapeHTML(category.name)}
                 </span>
             `);

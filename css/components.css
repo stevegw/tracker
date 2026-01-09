@@ -137,8 +137,8 @@
 }
 
 .badge-category {
-    background: var(--background);
-    color: var(--text-primary);
+    /* Background and color set inline via style attribute with category color */
+    font-weight: 600;
 }
 
 .badge-status {
