@@ -670,6 +670,26 @@ body.font-small .command-bar-input {
     font-size: 14px;
 }
 
+body.font-small .command-bar-hint {
+    font-size: 10px;
+}
+
+body.font-small .stat-label {
+    font-size: 9px;
+}
+
+body.font-small .stat-value {
+    font-size: 13px;
+}
+
+body.font-small .header-subtitle {
+    font-size: 11px;
+}
+
+body.font-small .search-input {
+    font-size: 12px;
+}
+
 body.font-large {
     font-size: 16px;
 }
@@ -710,6 +730,26 @@ body.font-large .category-name {
 
 body.font-large .command-bar-input {
     font-size: 17px;
+}
+
+body.font-large .command-bar-hint {
+    font-size: 13px;
+}
+
+body.font-large .stat-label {
+    font-size: 11px;
+}
+
+body.font-large .stat-value {
+    font-size: 17px;
+}
+
+body.font-large .header-subtitle {
+    font-size: 13px;
+}
+
+body.font-large .search-input {
+    font-size: 15px;
 }
 
 body.font-xlarge {
@@ -754,6 +794,26 @@ body.font-xlarge .command-bar-input {
     font-size: 19px;
 }
 
+body.font-xlarge .command-bar-hint {
+    font-size: 14px;
+}
+
+body.font-xlarge .stat-label {
+    font-size: 12px;
+}
+
+body.font-xlarge .stat-value {
+    font-size: 19px;
+}
+
+body.font-xlarge .header-subtitle {
+    font-size: 15px;
+}
+
+body.font-xlarge .search-input {
+    font-size: 17px;
+}
+
 body.font-xxlarge {
     font-size: 20px;
 }
@@ -796,6 +856,26 @@ body.font-xxlarge .command-bar-input {
     font-size: 21px;
 }
 
+body.font-xxlarge .command-bar-hint {
+    font-size: 16px;
+}
+
+body.font-xxlarge .stat-label {
+    font-size: 13px;
+}
+
+body.font-xxlarge .stat-value {
+    font-size: 21px;
+}
+
+body.font-xxlarge .header-subtitle {
+    font-size: 17px;
+}
+
+body.font-xxlarge .search-input {
+    font-size: 19px;
+}
+
 body.font-xxxlarge {
     font-size: 22px;
 }
@@ -836,4 +916,24 @@ body.font-xxxlarge .category-name {
 
 body.font-xxxlarge .command-bar-input {
     font-size: 23px;
+}
+
+body.font-xxxlarge .command-bar-hint {
+    font-size: 18px;
+}
+
+body.font-xxxlarge .stat-label {
+    font-size: 15px;
+}
+
+body.font-xxxlarge .stat-value {
+    font-size: 23px;
+}
+
+body.font-xxxlarge .header-subtitle {
+    font-size: 19px;
+}
+
+body.font-xxxlarge .search-input {
+    font-size: 21px;
 }

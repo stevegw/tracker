@@ -100,7 +100,7 @@ const HeaderComponent = {
         // Update font size select
         const fontSizeSelect = document.getElementById('font-size-select');
         if (fontSizeSelect) {
-            fontSizeSelect.value = settings.fontSize || 'normal';
+            fontSizeSelect.value = settings.fontSize || 'xlarge';
         }
 
         modal.classList.add('active');
@@ -242,6 +242,15 @@ const HeaderComponent = {
 
         // Apply saved font size on load
         const settings = Storage.getSettings();
+
+        // Upgrade existing users: if they have 'normal', upgrade to 'xlarge' as new default
+        // This is a one-time migration for v1.0.20+
+        if (!settings.fontSizeMigrated && settings.fontSize === 'normal') {
+            settings.fontSize = 'xlarge';
+            settings.fontSizeMigrated = true;
+            Storage.saveSettings(settings);
+        }
+
         this.applyFontSize(settings.fontSize || 'xlarge');
     },
 
