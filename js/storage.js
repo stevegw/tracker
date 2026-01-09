@@ -45,7 +45,7 @@ const Storage = {
         return data ? JSON.parse(data) : {
             notificationsEnabled: false,
             lastBackupPrompt: null,
-            fontSize: 'normal' // 'normal', 'large', 'xlarge'
+            fontSize: 'xlarge' // Default: 'xlarge' for better mobile readability
         };
     },
 

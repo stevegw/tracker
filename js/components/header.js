@@ -242,18 +242,25 @@ const HeaderComponent = {
 
         // Apply saved font size on load
         const settings = Storage.getSettings();
-        this.applyFontSize(settings.fontSize || 'normal');
+        this.applyFontSize(settings.fontSize || 'xlarge');
     },
 
     /**
      * Apply font size to body
      */
     applyFontSize(fontSize) {
-        document.body.classList.remove('font-large', 'font-xlarge');
-        if (fontSize === 'large') {
+        document.body.classList.remove('font-small', 'font-large', 'font-xlarge', 'font-xxlarge', 'font-xxxlarge');
+        if (fontSize === 'small') {
+            document.body.classList.add('font-small');
+        } else if (fontSize === 'large') {
             document.body.classList.add('font-large');
         } else if (fontSize === 'xlarge') {
             document.body.classList.add('font-xlarge');
+        } else if (fontSize === 'xxlarge') {
+            document.body.classList.add('font-xxlarge');
+        } else if (fontSize === 'xxxlarge') {
+            document.body.classList.add('font-xxxlarge');
         }
+        // 'normal' doesn't need a class
     }
 };
