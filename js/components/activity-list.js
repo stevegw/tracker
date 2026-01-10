@@ -239,6 +239,9 @@ const ActivityListComponent = {
      */
     updateActivityStatus(activityId, newStatus) {
         const activityModel = new ActivityModel();
+        const activity = activityModel.getById(activityId);
+
+        // Update status
         activityModel.updateStatus(activityId, newStatus);
 
         const statusLabels = {
@@ -260,10 +263,85 @@ const ActivityListComponent = {
             if (stats.currentStreak > 0) {
                 CelebrationComponent.celebrateStreak(stats.currentStreak);
             }
+
+            // Auto-repeat recurring tasks
+            if (activity && activity.cadence && activity.cadence !== 'one-time') {
+                this.createRecurringInstance(activity);
+            }
         }
 
         UIController.showToast(`Activity ${statusLabels[newStatus]}`, 'success');
         UIController.refresh();
+    },
+
+    /**
+     * Create a new instance of a recurring task
+     */
+    createRecurringInstance(completedActivity) {
+        const activityModel = new ActivityModel();
+
+        // Calculate next due date
+        const nextDueDate = this.calculateNextDueDate(completedActivity.dueDate, completedActivity.cadence);
+
+        // Create new instance with same properties
+        const newActivity = {
+            title: completedActivity.title,
+            description: completedActivity.description || '',
+            categoryId: completedActivity.categoryId || null,
+            status: 'not-started',
+            dueDate: nextDueDate,
+            notes: completedActivity.notes || '',
+            cadence: completedActivity.cadence,
+            resources: completedActivity.resources || []
+        };
+
+        activityModel.create(newActivity);
+
+        const cadenceLabels = {
+            'daily': 'tomorrow',
+            'weekly': 'next week',
+            'monthly': 'next month'
+        };
+
+        UIController.showToast(
+            `Recurring task will repeat ${cadenceLabels[completedActivity.cadence]}`,
+            'info'
+        );
+    },
+
+    /**
+     * Calculate next due date based on cadence
+     */
+    calculateNextDueDate(currentDueDate, cadence) {
+        if (!currentDueDate) {
+            // If no due date, use today as base
+            currentDueDate = Date.now();
+        }
+
+        const date = new Date(currentDueDate);
+        date.setHours(0, 0, 0, 0);
+
+        switch (cadence) {
+            case 'daily':
+                date.setDate(date.getDate() + 1);
+                break;
+            case 'weekly':
+                date.setDate(date.getDate() + 7);
+                break;
+            case 'monthly':
+                // Add 1 month, handling month boundaries
+                const currentMonth = date.getMonth();
+                date.setMonth(currentMonth + 1);
+                // If day changed (e.g., Jan 31 -> Feb 28), adjust
+                if (date.getMonth() !== (currentMonth + 1) % 12) {
+                    date.setDate(0); // Set to last day of previous month
+                }
+                break;
+            default:
+                return null;
+        }
+
+        return date.getTime();
     },
 
     /**
