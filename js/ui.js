@@ -100,37 +100,101 @@ const UIController = {
      * Initialize filter event listeners
      */
     initFilters() {
-        // Status filter
+        // Filters button - open modal
+        const filtersBtn = document.getElementById('filters-btn');
+        if (filtersBtn) {
+            filtersBtn.addEventListener('click', () => {
+                this.showFiltersModal();
+            });
+        }
+
+        // Filters modal close button
+        const closeBtn = document.getElementById('filters-modal-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                this.hideFiltersModal();
+            });
+        }
+
+        // Click outside to close
+        const modal = document.getElementById('filters-modal');
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.hideFiltersModal();
+                }
+            });
+        }
+
+        // Apply filters button
+        const applyBtn = document.getElementById('filters-apply-btn');
+        if (applyBtn) {
+            applyBtn.addEventListener('click', () => {
+                this.applyFilters();
+                this.hideFiltersModal();
+                this.showToast('Filters applied', 'success');
+            });
+        }
+
+        // Clear filters button
+        const clearBtn = document.getElementById('filters-clear-btn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                this.clearFilters();
+            });
+        }
+
+        // Auto-apply on change for immediate feedback
         const statusFilter = document.getElementById('status-filter');
-        if (statusFilter) {
-            statusFilter.addEventListener('change', () => {
-                this.applyFilters();
-            });
-        }
-
-        // Sort by
         const sortBy = document.getElementById('sort-by');
-        if (sortBy) {
-            sortBy.addEventListener('change', () => {
-                this.applyFilters();
-            });
-        }
-
-        // Overdue filter
         const overdueFilter = document.getElementById('overdue-filter');
-        if (overdueFilter) {
-            overdueFilter.addEventListener('change', () => {
-                this.applyFilters();
-            });
-        }
-
-        // Due soon filter
         const dueSoonFilter = document.getElementById('due-soon-filter');
-        if (dueSoonFilter) {
-            dueSoonFilter.addEventListener('change', () => {
-                this.applyFilters();
-            });
+
+        [statusFilter, sortBy, overdueFilter, dueSoonFilter].forEach(el => {
+            if (el) {
+                el.addEventListener('change', () => {
+                    this.applyFilters();
+                });
+            }
+        });
+    },
+
+    /**
+     * Show filters modal
+     */
+    showFiltersModal() {
+        const modal = document.getElementById('filters-modal');
+        if (modal) {
+            modal.classList.add('active');
         }
+    },
+
+    /**
+     * Hide filters modal
+     */
+    hideFiltersModal() {
+        const modal = document.getElementById('filters-modal');
+        if (modal) {
+            modal.classList.remove('active');
+        }
+    },
+
+    /**
+     * Clear all filters
+     */
+    clearFilters() {
+        const statusFilter = document.getElementById('status-filter');
+        const sortBy = document.getElementById('sort-by');
+        const overdueFilter = document.getElementById('overdue-filter');
+        const dueSoonFilter = document.getElementById('due-soon-filter');
+
+        if (statusFilter) statusFilter.value = '';
+        if (sortBy) sortBy.value = 'updatedAt';
+        if (overdueFilter) overdueFilter.checked = false;
+        if (dueSoonFilter) dueSoonFilter.checked = false;
+
+        this.applyFilters();
+        this.showToast('Filters cleared', 'success');
     },
 
     /**

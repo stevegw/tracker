@@ -90,38 +90,9 @@
                 </p>
             </div>
 
-            <!-- Filters -->
-            <div class="filters">
-                <div class="filter-group">
-                    <label for="status-filter">Status:</label>
-                    <select id="status-filter" class="filter-select">
-                        <option value="">All</option>
-                        <option value="not-started">Not Started</option>
-                        <option value="in-progress">In Progress</option>
-                        <option value="completed">Completed</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="sort-by">Sort by:</label>
-                    <select id="sort-by" class="filter-select">
-                        <option value="updatedAt">Recently Updated</option>
-                        <option value="createdAt">Recently Created</option>
-                        <option value="dueDate">Due Date</option>
-                        <option value="title">Title</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="overdue-filter">
-                        Overdue Only
-                    </label>
-                </div>
-                <div class="filter-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="due-soon-filter">
-                        Due Soon
-                    </label>
-                </div>
+            <!-- Filters Button -->
+            <div style="margin-bottom: 16px;">
+                <button class="btn btn-secondary" id="filters-btn">🔍 Filters & Sort</button>
             </div>
 
             <!-- Activity List -->
@@ -256,6 +227,54 @@
             </div>
             <div class="stats-dashboard" id="stats-dashboard">
                 <!-- Stats will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Modal -->
+    <div class="modal" id="filters-modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Filters & Sort</h2>
+                <button class="modal-close" id="filters-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="filters-modal-content">
+                    <div class="form-group">
+                        <label for="status-filter">Status</label>
+                        <select id="status-filter" class="form-select">
+                            <option value="">All</option>
+                            <option value="not-started">Not Started</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sort-by">Sort by</label>
+                        <select id="sort-by" class="form-select">
+                            <option value="updatedAt">Recently Updated</option>
+                            <option value="createdAt">Recently Created</option>
+                            <option value="dueDate">Due Date</option>
+                            <option value="title">Title</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="overdue-filter">
+                            <span>Overdue Only</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="due-soon-filter">
+                            <span>Due Soon</span>
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" id="filters-clear-btn">Clear Filters</button>
+                        <button class="btn btn-primary" id="filters-apply-btn">Apply</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
