@@ -90,8 +90,14 @@ const HeaderComponent = {
         // Update storage info
         this.updateStorageInfo();
 
-        // Update notifications toggle
+        // Update dark mode toggle
         const settings = Storage.getSettings();
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        if (darkModeToggle) {
+            darkModeToggle.checked = settings.darkMode || false;
+        }
+
+        // Update notifications toggle
         const notificationsToggle = document.getElementById('notifications-toggle');
         if (notificationsToggle) {
             notificationsToggle.checked = settings.notificationsEnabled;
@@ -201,6 +207,19 @@ const HeaderComponent = {
             });
         }
 
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('change', (e) => {
+                const enabled = e.target.checked;
+                const settings = Storage.getSettings();
+                settings.darkMode = enabled;
+                Storage.saveSettings(settings);
+                this.applyDarkMode(enabled);
+                UIController.showToast(enabled ? 'Dark mode enabled' : 'Light mode enabled', 'success');
+            });
+        }
+
         // Notifications toggle
         const notificationsToggle = document.getElementById('notifications-toggle');
         if (notificationsToggle) {
@@ -252,6 +271,9 @@ const HeaderComponent = {
         }
 
         this.applyFontSize(settings.fontSize || 'xlarge');
+
+        // Apply saved dark mode on load
+        this.applyDarkMode(settings.darkMode || false);
     },
 
     /**
@@ -271,5 +293,16 @@ const HeaderComponent = {
             document.body.classList.add('font-xxxlarge');
         }
         // 'normal' doesn't need a class
+    },
+
+    /**
+     * Apply dark mode to body
+     */
+    applyDarkMode(enabled) {
+        if (enabled) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
     }
 };
