@@ -163,6 +163,7 @@ class ActivityModel {
             dueDate: data.dueDate || null,
             completedAt: null,
             notes: data.notes || '',
+            cadence: data.cadence || 'one-time',
             resources: data.resources || [],
             timeSpent: 0,
             createdAt: Date.now(),

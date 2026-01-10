@@ -98,6 +98,25 @@ const ActivityListComponent = {
             `);
         }
 
+        // Cadence badge (only show if not one-time)
+        if (activity.cadence && activity.cadence !== 'one-time') {
+            const cadenceIcons = {
+                'daily': '📅',
+                'weekly': '📆',
+                'monthly': '🗓️'
+            };
+            const cadenceLabels = {
+                'daily': 'Daily',
+                'weekly': 'Weekly',
+                'monthly': 'Monthly'
+            };
+            badges.push(`
+                <span class="activity-badge badge-cadence">
+                    ${cadenceIcons[activity.cadence]} ${cadenceLabels[activity.cadence]}
+                </span>
+            `);
+        }
+
         // Status badge
         const statusLabels = {
             'not-started': 'Not Started',

@@ -31,6 +31,7 @@ const ActivityFormComponent = {
             document.getElementById('activity-status').value = activity.status;
             document.getElementById('activity-due-date').value = timestampToDateInput(activity.dueDate);
             document.getElementById('activity-notes').value = activity.notes || '';
+            document.getElementById('activity-cadence').value = activity.cadence || 'one-time';
 
             // Set resources
             this.currentResources = activity.resources || [];
@@ -92,6 +93,7 @@ const ActivityFormComponent = {
         const status = document.getElementById('activity-status').value;
         const dueDateValue = document.getElementById('activity-due-date').value;
         const notes = document.getElementById('activity-notes').value;
+        const cadence = document.getElementById('activity-cadence').value;
 
         const dueDate = dateInputToTimestamp(dueDateValue);
 
@@ -102,6 +104,7 @@ const ActivityFormComponent = {
             status,
             dueDate,
             notes,
+            cadence,
             resources: this.currentResources
         };
 

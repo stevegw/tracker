@@ -96,7 +96,8 @@ const CommandBarComponent = {
             categoryId: null,
             dueDate: null,
             status: 'not-started',
-            priority: null
+            priority: null,
+            cadence: 'one-time'
         };
 
         // Extract category (@category-name)
@@ -126,6 +127,14 @@ const CommandBarComponent = {
             parsed.priority = priorityMatch[1].toLowerCase();
             // Remove #priority from title
             parsed.title = parsed.title.replace(/#(urgent|important|high|low)/gi, '').trim();
+        }
+
+        // Extract cadence (#daily, #weekly, #monthly, /daily, etc.)
+        const cadenceMatch = text.match(/[#\/](daily|weekly|monthly)/i);
+        if (cadenceMatch) {
+            parsed.cadence = cadenceMatch[1].toLowerCase();
+            // Remove cadence marker from title
+            parsed.title = parsed.title.replace(/[#\/](daily|weekly|monthly)/gi, '').trim();
         }
 
         // Extract due date patterns
@@ -234,6 +243,7 @@ const CommandBarComponent = {
             categoryId: parsed.categoryId || null,
             status: parsed.status,
             dueDate: parsed.dueDate || null,
+            cadence: parsed.cadence || 'one-time',
             notes: '',
             resources: []
         };
