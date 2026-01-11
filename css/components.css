@@ -124,6 +124,23 @@
     margin-bottom: var(--spacing-sm);
 }
 
+.activity-badges-left {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    align-items: center;
+    flex: 1;
+}
+
+.activity-badges-right {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: auto;
+}
+
 .activity-badge {
     display: inline-flex;
     align-items: center;

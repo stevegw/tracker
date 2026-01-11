@@ -67,8 +67,13 @@ const ActivityListComponent = {
                 </div>
             </div>
             <div class="activity-card-meta">
-                ${badges}
-                ${activity.timeSpent > 0 ? `<span class="activity-time">⏱️ ${formatTimeSpent(activity.timeSpent)}</span>` : ''}
+                <div class="activity-badges-left">
+                    ${badges.left}
+                    ${activity.timeSpent > 0 ? `<span class="activity-time">⏱️ ${formatTimeSpent(activity.timeSpent)}</span>` : ''}
+                </div>
+                <div class="activity-badges-right">
+                    ${badges.right}
+                </div>
                 <div class="activity-card-menu">
                     <button class="activity-menu-btn" onclick="ActivityListComponent.toggleMenu('${activity.id}')">⋮</button>
                     <div class="activity-menu-dropdown" id="menu-${activity.id}">
@@ -87,18 +92,19 @@ const ActivityListComponent = {
      * Create badges for activity card
      */
     createBadges(activity, category) {
-        const badges = [];
+        const leftBadges = [];
+        const rightBadges = [];
 
-        // Category badge (visual tag with color)
+        // Category badge (visual tag with color) - LEFT
         if (category) {
-            badges.push(`
+            leftBadges.push(`
                 <span class="activity-badge badge-category" style="background: ${category.color}20; color: ${category.color}; border: 1.5px solid ${category.color};">
                     ${escapeHTML(category.name)}
                 </span>
             `);
         }
 
-        // Cadence badge (only show if not one-time)
+        // Cadence badge (only show if not one-time) - LEFT
         if (activity.cadence && activity.cadence !== 'one-time') {
             const cadenceIcons = {
                 'daily': '📅',
@@ -110,26 +116,26 @@ const ActivityListComponent = {
                 'weekly': 'Weekly',
                 'monthly': 'Monthly'
             };
-            badges.push(`
+            leftBadges.push(`
                 <span class="activity-badge badge-cadence">
                     ${cadenceIcons[activity.cadence]} ${cadenceLabels[activity.cadence]}
                 </span>
             `);
         }
 
-        // Status badge
+        // Status badge - LEFT
         const statusLabels = {
             'not-started': 'Not Started',
             'in-progress': 'In Progress',
             'completed': 'Completed'
         };
-        badges.push(`
+        leftBadges.push(`
             <span class="activity-badge badge-status ${activity.status}">
                 ${statusLabels[activity.status]}
             </span>
         `);
 
-        // Due date badge
+        // Due date badge - RIGHT
         if (activity.dueDate) {
             const dueClass = isOverdue(activity.dueDate) && activity.status !== 'completed'
                 ? 'overdue'
@@ -138,14 +144,17 @@ const ActivityListComponent = {
                     : 'future';
 
             const dueIcon = dueClass === 'overdue' ? '⚠️' : '📅';
-            badges.push(`
+            rightBadges.push(`
                 <span class="activity-badge badge-due ${dueClass}">
                     ${dueIcon} ${formatDate(activity.dueDate)}
                 </span>
             `);
         }
 
-        return badges.join('');
+        return {
+            left: leftBadges.join(''),
+            right: rightBadges.join('')
+        };
     },
 
     /**
