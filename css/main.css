@@ -123,6 +123,19 @@ body {
     align-items: center;
 }
 
+/* Add Activity Button */
+#add-activity-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.add-icon {
+    font-size: 1.3em;
+    font-weight: bold;
+    line-height: 1;
+}
+
 /* Mobile Menu Button */
 .mobile-menu-btn {
     display: none;
@@ -573,7 +586,6 @@ body {
     #add-activity-btn {
         white-space: nowrap;
         padding: 6px 10px;
-        font-size: 11px;
         order: 1;
     }
 
@@ -664,7 +676,6 @@ body {
     }
 
     #add-activity-btn {
-        font-size: 11px;
         padding: 6px 10px;
     }
 
