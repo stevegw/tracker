@@ -908,3 +908,68 @@
 .pulse-animation {
     animation: pulseScale 0.6s ease-out;
 }
+
+/* Welcome Banner */
+.welcome-banner {
+    background: var(--surface);
+    border: 1.5px solid var(--primary-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    animation: slideDown 0.4s ease-out;
+}
+
+.welcome-banner-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex: 1;
+}
+
+.welcome-banner-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.welcome-banner-text {
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+.welcome-banner-text strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile adjustments for welcome banner */
+@media (max-width: 768px) {
+    .welcome-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+
+    .welcome-banner-content {
+        flex-direction: row;
+    }
+
+    .welcome-banner button {
+        width: 100%;
+    }
+}

@@ -25,6 +25,9 @@ function initializeApp() {
         // Check for first run and create welcome activities
         checkFirstRunAndCreateWelcome();
 
+        // Show welcome banner if examples exist
+        showWelcomeBanner();
+
         console.log('Tracker App - Ready!');
     });
 }
@@ -56,52 +59,72 @@ function checkFirstRunAndCreateWelcome() {
 }
 
 /**
- * Create welcome activities for first-time users
+ * Create welcome categories and activities for first-time users
  */
 function createWelcomeActivities() {
+    const categoryModel = new CategoryModel();
     const activityModel = new ActivityModel();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Activity 1: Pending, due soon
+    // Create example categories
+    const workCategory = categoryModel.create(
+        'Work',
+        'Work-related tasks and projects',
+        '#3b82f6'
+    );
+    workCategory.isWelcomeCategory = true;
+    categoryModel.update(workCategory.id, { isWelcomeCategory: true });
+
+    const personalCategory = categoryModel.create(
+        'Personal',
+        'Personal goals and activities',
+        '#10b981'
+    );
+    personalCategory.isWelcomeCategory = true;
+    categoryModel.update(personalCategory.id, { isWelcomeCategory: true });
+
+    const learningCategory = categoryModel.create(
+        'Learning',
+        'Educational and skill development',
+        '#f59e0b'
+    );
+    learningCategory.isWelcomeCategory = true;
+    categoryModel.update(learningCategory.id, { isWelcomeCategory: true });
+
+    // Activity 1: Work - Pending, due soon
     activityModel.create({
-        title: 'Complete JavaScript tutorial',
-        description: 'Learn modern JavaScript ES6+ features',
-        categoryId: null,
+        title: 'Prepare presentation slides',
+        description: 'Create slides for the quarterly review meeting',
+        categoryId: workCategory.id,
         status: 'not-started',
         dueDate: today.getTime() + (2 * 24 * 60 * 60 * 1000), // 2 days from now
-        notes: 'Focus on async/await, promises, and arrow functions',
-        resources: [
-            { title: 'MDN JavaScript Guide', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide' }
-        ],
+        notes: 'Include Q4 metrics and team achievements',
+        resources: [],
         isWelcomeActivity: true
     });
 
-    // Activity 2: In progress
+    // Activity 2: Learning - In progress
     activityModel.create({
-        title: 'Read AWS Well-Architected Framework',
-        description: 'Study the five pillars of AWS architecture',
-        categoryId: null,
+        title: 'Complete online course',
+        description: 'Finish the data analysis fundamentals course',
+        categoryId: learningCategory.id,
         status: 'in-progress',
         dueDate: today.getTime() + (7 * 24 * 60 * 60 * 1000), // 7 days from now
-        notes: 'Currently on the Security pillar',
-        resources: [
-            { title: 'AWS Well-Architected', url: 'https://aws.amazon.com/architecture/well-architected/' }
-        ],
+        notes: 'Currently on module 3 of 5',
+        resources: [],
         isWelcomeActivity: true
     });
 
-    // Activity 3: Completed yesterday (builds streak!)
+    // Activity 3: Personal - Completed yesterday (builds streak!)
     const completedActivity1 = activityModel.create({
-        title: 'Watch Docker crash course',
-        description: 'Learn containerization basics with Docker',
-        categoryId: null,
+        title: 'Morning workout',
+        description: '30-minute exercise routine',
+        categoryId: personalCategory.id,
         status: 'not-started',
         dueDate: null,
-        notes: 'Great video! Now understand containers vs VMs',
-        resources: [
-            { title: 'Docker Getting Started', url: 'https://docs.docker.com/get-started/' }
-        ],
+        notes: 'Felt great after the workout!',
+        resources: [],
         isWelcomeActivity: true
     });
     // Mark as completed yesterday
@@ -109,26 +132,26 @@ function createWelcomeActivities() {
     completedActivity1.completedAt = today.getTime() - (24 * 60 * 60 * 1000); // Yesterday
     activityModel.update(completedActivity1.id, completedActivity1);
 
-    // Activity 4: Pending
+    // Activity 4: Work - Pending
     activityModel.create({
-        title: 'Practice Kubernetes deployments',
-        description: 'Deploy a sample app to a K8s cluster',
-        categoryId: null,
+        title: 'Review project proposal',
+        description: 'Review and provide feedback on the new project plan',
+        categoryId: workCategory.id,
         status: 'not-started',
         dueDate: today.getTime() + (5 * 24 * 60 * 60 * 1000), // 5 days from now
-        notes: 'Use minikube for local testing',
+        notes: '',
         resources: [],
         isWelcomeActivity: true
     });
 
-    // Activity 5: Completed 2 days ago
+    // Activity 5: Personal - Completed 2 days ago
     const completedActivity2 = activityModel.create({
-        title: 'Review system design patterns',
-        description: 'Study common architectural patterns',
-        categoryId: null,
+        title: 'Organize home office',
+        description: 'Declutter and reorganize workspace',
+        categoryId: personalCategory.id,
         status: 'not-started',
         dueDate: null,
-        notes: 'Covered: Load Balancing, Caching, Message Queues',
+        notes: 'Desk is much cleaner now!',
         resources: [],
         isWelcomeActivity: true
     });
@@ -137,7 +160,74 @@ function createWelcomeActivities() {
     completedActivity2.completedAt = today.getTime() - (2 * 24 * 60 * 60 * 1000); // 2 days ago
     activityModel.update(completedActivity2.id, completedActivity2);
 
-    console.log('Welcome activities created!');
+    console.log('Welcome categories and activities created!');
+
+    // Show welcome banner
+    showWelcomeBanner();
+
+    UIController.refresh();
+}
+
+/**
+ * Check if welcome examples exist
+ */
+function hasWelcomeExamples() {
+    const activityModel = new ActivityModel();
+    const categoryModel = new CategoryModel();
+
+    const activities = activityModel.getAll();
+    const categories = categoryModel.getAll();
+
+    const hasWelcomeActivities = activities.some(a => a.isWelcomeActivity);
+    const hasWelcomeCategories = categories.some(c => c.isWelcomeCategory);
+
+    return hasWelcomeActivities || hasWelcomeCategories;
+}
+
+/**
+ * Show welcome banner with option to clear examples
+ */
+function showWelcomeBanner() {
+    const banner = document.getElementById('welcome-banner');
+    if (banner && hasWelcomeExamples()) {
+        banner.style.display = 'flex';
+    }
+}
+
+/**
+ * Clear all welcome examples (categories and activities)
+ */
+function clearWelcomeExamples() {
+    if (!confirm('Remove all example data? This will delete example categories and activities.')) {
+        return;
+    }
+
+    const activityModel = new ActivityModel();
+    const categoryModel = new CategoryModel();
+
+    // Delete all welcome activities
+    const activities = activityModel.getAll();
+    activities.forEach(activity => {
+        if (activity.isWelcomeActivity) {
+            activityModel.delete(activity.id);
+        }
+    });
+
+    // Delete all welcome categories
+    const categories = categoryModel.getAll();
+    categories.forEach(category => {
+        if (category.isWelcomeCategory) {
+            categoryModel.delete(category.id);
+        }
+    });
+
+    // Hide banner
+    const banner = document.getElementById('welcome-banner');
+    if (banner) {
+        banner.style.display = 'none';
+    }
+
+    UIController.showToast('Example data removed! Start adding your own activities.', 'success');
     UIController.refresh();
 }
 
