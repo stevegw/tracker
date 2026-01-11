@@ -277,9 +277,12 @@ const ActivityListComponent = {
             'completed': 'completed'
         };
 
+        // Refresh UI first to show updated status
+        UIController.refresh();
+
         // Celebrate if marking as completed!
         if (newStatus === 'completed') {
-            // Find the activity card element for animation
+            // Find the activity card element for animation (after refresh)
             const activityCard = document.querySelector(`[data-activity-id="${activityId}"]`);
 
             // Trigger celebration
@@ -298,7 +301,6 @@ const ActivityListComponent = {
         }
 
         UIController.showToast(`Activity ${statusLabels[newStatus]}`, 'success');
-        UIController.refresh();
     },
 
     /**
