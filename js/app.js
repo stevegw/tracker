@@ -232,6 +232,34 @@ function clearWelcomeExamples() {
 }
 
 /**
+ * Load example data for existing users (called from settings)
+ */
+function loadExampleData() {
+    // Check if examples already exist
+    if (hasWelcomeExamples()) {
+        if (!confirm('Example data already exists. This will add more examples. Continue?')) {
+            return;
+        }
+    }
+
+    // Create welcome activities and categories
+    createWelcomeActivities();
+
+    // Close settings modal
+    const settingsModal = document.getElementById('settings-modal');
+    if (settingsModal) {
+        settingsModal.classList.remove('active');
+    }
+
+    // Show welcome banner
+    showWelcomeBanner();
+
+    // Show success message
+    UIController.showToast('👋 Example data loaded! Try them out or delete them.', 'success');
+    UIController.refresh();
+}
+
+/**
  * Create some sample data for testing/demo purposes
  * Call this function from the browser console to populate with sample data
  */
