@@ -147,6 +147,7 @@ const ActivityListComponent = {
             'in-progress': 'In Progress',
             'completed': 'Completed'
         };
+        console.log('createBadges - rendering status badge for:', activity.title, 'status:', activity.status);
         leftBadges.push(`
             <span class="activity-badge badge-status ${activity.status}">
                 ${statusLabels[activity.status]}
@@ -265,14 +266,23 @@ const ActivityListComponent = {
      * Update activity status
      */
     updateActivityStatus(activityId, newStatus) {
+        console.log('updateActivityStatus called with:', { activityId, newStatus });
+
         const activityModel = new ActivityModel();
         const activity = activityModel.getById(activityId);
+
+        console.log('Current activity status:', activity?.status);
 
         // Store cadence for recurring task creation
         const cadence = activity ? activity.cadence : null;
 
         // Update status
         activityModel.updateStatus(activityId, newStatus);
+
+        console.log('After updateStatus, verifying...');
+        const verifyModel = new ActivityModel();
+        const verifiedActivity = verifyModel.getById(activityId);
+        console.log('Verified activity status in localStorage:', verifiedActivity?.status);
 
         const statusLabels = {
             'not-started': 'marked as not started',
