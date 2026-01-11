@@ -141,6 +141,20 @@
     margin-left: auto;
 }
 
+/* Ensure right alignment works on mobile */
+@media (max-width: 768px) {
+    .activity-card-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .activity-badges-right {
+        flex-shrink: 0;
+        margin-left: var(--spacing-sm);
+    }
+}
+
 .activity-badge {
     display: inline-flex;
     align-items: center;
