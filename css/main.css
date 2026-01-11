@@ -558,7 +558,6 @@ body {
 
     #sign-out-btn {
         padding: 6px 10px !important;
-        font-size: 11px !important;
     }
 
     /* Auth button also in top right */
@@ -567,7 +566,6 @@ body {
         top: var(--spacing-sm);
         right: 46px; /* After settings button */
         padding: 6px 12px;
-        font-size: 11px;
     }
 
     /* Action buttons row with search on left */
