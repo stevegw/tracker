@@ -8,6 +8,9 @@ const ActivityListComponent = {
      * Render activity list based on current filters
      */
     render(activities) {
+        console.log('Rendering activities:', activities.length, 'activities');
+        activities.forEach(act => console.log('  -', act.title, 'status:', act.status));
+
         const activityList = document.getElementById('activity-list');
         if (!activityList) return;
 
@@ -268,8 +271,18 @@ const ActivityListComponent = {
         const activityModel = new ActivityModel();
         const activity = activityModel.getById(activityId);
 
+        console.log('Before update - activity status:', activity?.status);
+
+        // Store cadence for recurring task creation
+        const cadence = activity ? activity.cadence : null;
+
         // Update status
         activityModel.updateStatus(activityId, newStatus);
+
+        console.log('After update - checking localStorage');
+        const verifyModel = new ActivityModel();
+        const verifiedActivity = verifyModel.getById(activityId);
+        console.log('Verified activity status from new model instance:', verifiedActivity?.status);
 
         const statusLabels = {
             'not-started': 'marked as not started',
@@ -277,7 +290,7 @@ const ActivityListComponent = {
             'completed': 'completed'
         };
 
-        // Refresh UI first to show updated status
+        // Refresh UI to show updated status
         UIController.refresh();
 
         // Celebrate if marking as completed!
@@ -288,15 +301,19 @@ const ActivityListComponent = {
             // Trigger celebration
             CelebrationComponent.celebrate(activityCard);
 
-            // Check for streak milestone
-            const stats = activityModel.getStats();
+            // Get fresh activity data after update for stats
+            const freshModel = new ActivityModel();
+            const stats = freshModel.getStats();
             if (stats.currentStreak > 0) {
                 CelebrationComponent.celebrateStreak(stats.currentStreak);
             }
 
             // Auto-repeat recurring tasks
-            if (activity && activity.cadence && activity.cadence !== 'one-time') {
-                this.createRecurringInstance(activity);
+            if (cadence && cadence !== 'one-time') {
+                const updatedActivity = freshModel.getById(activityId);
+                if (updatedActivity) {
+                    this.createRecurringInstance(updatedActivity);
+                }
             }
         }
 

@@ -237,6 +237,7 @@ const UIController = {
      */
     applyFilters() {
         const activityModel = new ActivityModel();
+        console.log('applyFilters - total activities in model:', activityModel.getAll().length);
 
         // Get current filter values
         const searchQuery = document.getElementById('search-input')?.value || '';
