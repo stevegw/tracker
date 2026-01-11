@@ -1,6 +1,9 @@
 // Activity list component
 
 const ActivityListComponent = {
+    selectionMode: false,
+    selectedActivities: new Set(),
+
     /**
      * Render activity list based on current filters
      */
@@ -19,6 +22,7 @@ const ActivityListComponent = {
                     <button class="btn btn-primary" onclick="ActivityFormComponent.show()">+ Create Activity</button>
                 </div>
             `;
+            this.updateBulkActionsToolbar();
             return;
         }
 
@@ -27,6 +31,9 @@ const ActivityListComponent = {
             const card = this.createActivityCard(activity);
             activityList.appendChild(card);
         });
+
+        // Update bulk actions toolbar
+        this.updateBulkActionsToolbar();
     },
 
     /**
@@ -59,8 +66,19 @@ const ActivityListComponent = {
             ? `<div class="activity-notes">${escapeHTML(activity.notes)}</div>`
             : '';
 
+        const checkboxHtml = this.selectionMode ? `
+            <div class="activity-card-checkbox">
+                <input type="checkbox"
+                       class="activity-checkbox"
+                       data-activity-id="${activity.id}"
+                       ${this.selectedActivities.has(activity.id) ? 'checked' : ''}
+                       onchange="ActivityListComponent.toggleSelection('${activity.id}')">
+            </div>
+        ` : '';
+
         card.innerHTML = `
             <div class="activity-card-header">
+                ${checkboxHtml}
                 <div style="flex: 1;">
                     <h3 class="activity-card-title">${escapeHTML(activity.title)}</h3>
                     ${activity.description ? `<p class="activity-card-description">${escapeHTML(activity.description)}</p>` : ''}
@@ -366,5 +384,176 @@ const ActivityListComponent = {
             UIController.showToast('Activity deleted', 'success');
             UIController.refresh();
         }
+    },
+
+    /**
+     * Toggle selection mode
+     */
+    toggleSelectionMode() {
+        this.selectionMode = !this.selectionMode;
+        if (!this.selectionMode) {
+            this.selectedActivities.clear();
+        }
+        UIController.applyFilters();
+    },
+
+    /**
+     * Toggle selection of an activity
+     */
+    toggleSelection(activityId) {
+        if (this.selectedActivities.has(activityId)) {
+            this.selectedActivities.delete(activityId);
+        } else {
+            this.selectedActivities.add(activityId);
+        }
+        this.updateBulkActionsToolbar();
+        this.updateSelectAllCheckbox();
+    },
+
+    /**
+     * Select or deselect all activities
+     */
+    toggleSelectAll() {
+        const activityModel = new ActivityModel();
+        const activities = activityModel.getAll();
+
+        if (this.selectedActivities.size === activities.length) {
+            // All selected, deselect all
+            this.selectedActivities.clear();
+        } else {
+            // Some or none selected, select all
+            this.selectedActivities.clear();
+            activities.forEach(activity => {
+                this.selectedActivities.add(activity.id);
+            });
+        }
+
+        UIController.applyFilters();
+    },
+
+    /**
+     * Update select all checkbox state
+     */
+    updateSelectAllCheckbox() {
+        const selectAllCheckbox = document.getElementById('select-all-checkbox');
+        if (!selectAllCheckbox) return;
+
+        const activityModel = new ActivityModel();
+        const activities = activityModel.getAll();
+
+        selectAllCheckbox.checked = activities.length > 0 && this.selectedActivities.size === activities.length;
+        selectAllCheckbox.indeterminate = this.selectedActivities.size > 0 && this.selectedActivities.size < activities.length;
+    },
+
+    /**
+     * Update bulk actions toolbar
+     */
+    updateBulkActionsToolbar() {
+        const toolbar = document.getElementById('bulk-actions-toolbar');
+        const countEl = document.getElementById('bulk-actions-count');
+        const selectBtn = document.getElementById('toggle-selection-btn');
+
+        if (!toolbar) return;
+
+        if (this.selectionMode) {
+            toolbar.style.display = 'flex';
+            if (countEl) {
+                countEl.textContent = `${this.selectedActivities.size} selected`;
+            }
+            if (selectBtn) {
+                selectBtn.textContent = 'Cancel';
+                selectBtn.classList.remove('btn-secondary');
+                selectBtn.classList.add('btn-secondary');
+            }
+            this.updateSelectAllCheckbox();
+        } else {
+            toolbar.style.display = 'none';
+            if (selectBtn) {
+                selectBtn.textContent = '☑ Select';
+                selectBtn.classList.remove('btn-secondary');
+                selectBtn.classList.add('btn-secondary');
+            }
+        }
+    },
+
+    /**
+     * Bulk start selected activities
+     */
+    bulkStart() {
+        if (this.selectedActivities.size === 0) {
+            UIController.showToast('No activities selected', 'warning');
+            return;
+        }
+
+        const activityModel = new ActivityModel();
+        let count = 0;
+
+        this.selectedActivities.forEach(activityId => {
+            const activity = activityModel.getById(activityId);
+            if (activity && activity.status === 'not-started') {
+                activityModel.updateStatus(activityId, 'in-progress');
+                count++;
+            }
+        });
+
+        this.selectedActivities.clear();
+        this.selectionMode = false;
+
+        UIController.showToast(`${count} ${count === 1 ? 'activity' : 'activities'} started`, 'success');
+        UIController.refresh();
+    },
+
+    /**
+     * Bulk complete selected activities
+     */
+    bulkComplete() {
+        if (this.selectedActivities.size === 0) {
+            UIController.showToast('No activities selected', 'warning');
+            return;
+        }
+
+        const activityModel = new ActivityModel();
+        let count = 0;
+
+        this.selectedActivities.forEach(activityId => {
+            const activity = activityModel.getById(activityId);
+            if (activity && activity.status !== 'completed') {
+                activityModel.updateStatus(activityId, 'completed');
+                count++;
+            }
+        });
+
+        this.selectedActivities.clear();
+        this.selectionMode = false;
+
+        UIController.showToast(`${count} ${count === 1 ? 'activity' : 'activities'} completed`, 'success');
+        UIController.refresh();
+    },
+
+    /**
+     * Bulk delete selected activities
+     */
+    bulkDelete() {
+        if (this.selectedActivities.size === 0) {
+            UIController.showToast('No activities selected', 'warning');
+            return;
+        }
+
+        const count = this.selectedActivities.size;
+        if (!confirm(`Are you sure you want to delete ${count} ${count === 1 ? 'activity' : 'activities'}?`)) {
+            return;
+        }
+
+        const activityModel = new ActivityModel();
+
+        this.selectedActivities.forEach(activityId => {
+            activityModel.delete(activityId);
+        });
+
+        this.selectedActivities.clear();
+        this.selectionMode = false;
+
+        UIController.showToast(`${count} ${count === 1 ? 'activity' : 'activities'} deleted`, 'success');
+        UIController.refresh();
     }
 };

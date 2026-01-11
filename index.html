@@ -90,9 +90,26 @@
                 </p>
             </div>
 
-            <!-- Filters Button -->
-            <div style="margin-bottom: 16px;">
+            <!-- Action Buttons -->
+            <div style="margin-bottom: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
                 <button class="btn btn-secondary" id="filters-btn">🔍 Filters & Sort</button>
+                <button class="btn btn-secondary" id="toggle-selection-btn" onclick="ActivityListComponent.toggleSelectionMode()">☑ Select</button>
+            </div>
+
+            <!-- Bulk Actions Toolbar -->
+            <div id="bulk-actions-toolbar" class="bulk-actions-toolbar" style="display: none;">
+                <div class="bulk-actions-left">
+                    <label class="bulk-select-all">
+                        <input type="checkbox" id="select-all-checkbox" onchange="ActivityListComponent.toggleSelectAll()">
+                        <span>Select All</span>
+                    </label>
+                    <span id="bulk-actions-count" class="bulk-actions-count">0 selected</span>
+                </div>
+                <div class="bulk-actions-buttons">
+                    <button class="btn btn-small btn-primary" onclick="ActivityListComponent.bulkStart()">▶ Start</button>
+                    <button class="btn btn-small btn-success" onclick="ActivityListComponent.bulkComplete()">✓ Complete</button>
+                    <button class="btn btn-small btn-danger" onclick="ActivityListComponent.bulkDelete()">🗑️ Delete</button>
+                </div>
             </div>
 
             <!-- Activity List -->
