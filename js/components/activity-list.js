@@ -18,7 +18,7 @@ const ActivityListComponent = {
             activityList.innerHTML = `
                 <div class="empty-state">
                     <h2>No activities found</h2>
-                    <p>Create your first activity to get started tracking your technical enablement journey.</p>
+                    <p>Create your first activity to get started tracking your progress.</p>
                     <button class="btn btn-primary" onclick="ActivityFormComponent.show()">+ Create Activity</button>
                 </div>
             `;

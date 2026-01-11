@@ -90,20 +90,33 @@ const HeaderComponent = {
         // Update storage info
         this.updateStorageInfo();
 
-        // Update dark mode toggle
+        // Update settings fields
         const settings = Storage.getSettings();
+
+        // App title and subtitle
+        const titleInput = document.getElementById('app-title-input');
+        if (titleInput) {
+            titleInput.value = settings.appTitle || 'My Tracker';
+        }
+
+        const subtitleInput = document.getElementById('app-subtitle-input');
+        if (subtitleInput) {
+            subtitleInput.value = settings.appSubtitle || 'Track your progress';
+        }
+
+        // Dark mode toggle
         const darkModeToggle = document.getElementById('dark-mode-toggle');
         if (darkModeToggle) {
             darkModeToggle.checked = settings.darkMode || false;
         }
 
-        // Update notifications toggle
+        // Notifications toggle
         const notificationsToggle = document.getElementById('notifications-toggle');
         if (notificationsToggle) {
             notificationsToggle.checked = settings.notificationsEnabled;
         }
 
-        // Update font size select
+        // Font size select
         const fontSizeSelect = document.getElementById('font-size-select');
         if (fontSizeSelect) {
             fontSizeSelect.value = settings.fontSize || 'xlarge';
@@ -259,6 +272,32 @@ const HeaderComponent = {
             });
         }
 
+        // App title input
+        const titleInput = document.getElementById('app-title-input');
+        if (titleInput) {
+            titleInput.addEventListener('blur', (e) => {
+                const title = e.target.value.trim() || 'My Tracker';
+                const settings = Storage.getSettings();
+                settings.appTitle = title;
+                Storage.saveSettings(settings);
+                this.applyTitle(title);
+                UIController.showToast('App title updated', 'success');
+            });
+        }
+
+        // App subtitle input
+        const subtitleInput = document.getElementById('app-subtitle-input');
+        if (subtitleInput) {
+            subtitleInput.addEventListener('blur', (e) => {
+                const subtitle = e.target.value.trim() || 'Track your progress';
+                const settings = Storage.getSettings();
+                settings.appSubtitle = subtitle;
+                Storage.saveSettings(settings);
+                this.applySubtitle(subtitle);
+                UIController.showToast('Subtitle updated', 'success');
+            });
+        }
+
         // Apply saved font size on load
         const settings = Storage.getSettings();
 
@@ -274,6 +313,34 @@ const HeaderComponent = {
 
         // Apply saved dark mode on load
         this.applyDarkMode(settings.darkMode || false);
+
+        // Apply saved title and subtitle on load
+        this.applyTitle(settings.appTitle || 'My Tracker');
+        this.applySubtitle(settings.appSubtitle || 'Track your progress');
+    },
+
+    /**
+     * Apply app title
+     */
+    applyTitle(title) {
+        const titleEl = document.getElementById('app-title');
+        const docTitle = document.querySelector('title');
+        if (titleEl) {
+            titleEl.textContent = title;
+        }
+        if (docTitle) {
+            docTitle.textContent = title;
+        }
+    },
+
+    /**
+     * Apply app subtitle
+     */
+    applySubtitle(subtitle) {
+        const subtitleEl = document.getElementById('app-subtitle');
+        if (subtitleEl) {
+            subtitleEl.textContent = subtitle;
+        }
     },
 
     /**

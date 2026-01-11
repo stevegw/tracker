@@ -9,7 +9,7 @@ function initializeApp() {
         return;
     }
 
-    console.log('Technical Enablement Tracker - Starting...');
+    console.log('Tracker App - Starting...');
 
     // Initialize Supabase client
     if (!initSupabase()) {
@@ -25,7 +25,7 @@ function initializeApp() {
         // Check for first run and create welcome activities
         checkFirstRunAndCreateWelcome();
 
-        console.log('Technical Enablement Tracker - Ready!');
+        console.log('Tracker App - Ready!');
     });
 }
 

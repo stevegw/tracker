@@ -46,7 +46,9 @@ const Storage = {
             notificationsEnabled: false,
             lastBackupPrompt: null,
             fontSize: 'xlarge', // Default: 'xlarge' for better mobile readability
-            darkMode: false // Default: light mode
+            darkMode: false, // Default: light mode
+            appTitle: 'My Tracker', // Default app title
+            appSubtitle: 'Track your progress' // Default subtitle
         };
     },
 
