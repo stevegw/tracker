@@ -18,12 +18,12 @@ function initializeApp() {
     }
 
     // Initialize authentication
-    AuthComponent.init().then(() => {
+    AuthComponent.init().then(async () => {
         // Initialize UI Controller
         UIController.init();
 
         // Check for first run and create welcome activities
-        checkFirstRunAndCreateWelcome();
+        await checkFirstRunAndCreateWelcome();
 
         // Show welcome banner if examples exist
         showWelcomeBanner();
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', initializeApp);
 /**
  * Check if this is the first run and create welcome activities
  */
-function checkFirstRunAndCreateWelcome() {
+async function checkFirstRunAndCreateWelcome() {
     const activityModel = new ActivityModel();
     const activities = activityModel.getAll();
 
@@ -47,7 +47,7 @@ function checkFirstRunAndCreateWelcome() {
         const firstRun = localStorage.getItem('enablement_first_run');
 
         if (firstRun !== 'false') {
-            createWelcomeActivities();
+            await createWelcomeActivities();
             localStorage.setItem('enablement_first_run', 'false');
 
             // Show welcome toast
@@ -61,106 +61,127 @@ function checkFirstRunAndCreateWelcome() {
 /**
  * Create welcome categories and activities for first-time users
  */
-function createWelcomeActivities() {
+async function createWelcomeActivities() {
     const categoryModel = new CategoryModel();
     const activityModel = new ActivityModel();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Create example categories
-    const workCategory = categoryModel.create(
-        'Work',
-        'Work-related tasks and projects',
-        '#3b82f6'
-    );
-    workCategory.isWelcomeCategory = true;
-    categoryModel.update(workCategory.id, { isWelcomeCategory: true });
+    // Temporarily disable sync toasts during bulk creation
+    const originalShowToast = UIController.showToast;
+    UIController.showToast = (message, type) => {
+        if (message.includes('syncing')) return; // Suppress sync errors during bulk load
+        originalShowToast.call(UIController, message, type);
+    };
 
-    const personalCategory = categoryModel.create(
-        'Personal',
-        'Personal goals and activities',
-        '#10b981'
-    );
-    personalCategory.isWelcomeCategory = true;
-    categoryModel.update(personalCategory.id, { isWelcomeCategory: true });
+    try {
+        // Create example categories
+        const workCategory = categoryModel.create(
+            'Work',
+            'Work-related tasks and projects',
+            '#3b82f6'
+        );
+        workCategory.isWelcomeCategory = true;
+        categoryModel.update(workCategory.id, { isWelcomeCategory: true });
+        await new Promise(resolve => setTimeout(resolve, 100)); // Small delay
 
-    const learningCategory = categoryModel.create(
-        'Learning',
-        'Educational and skill development',
-        '#f59e0b'
-    );
-    learningCategory.isWelcomeCategory = true;
-    categoryModel.update(learningCategory.id, { isWelcomeCategory: true });
+        const personalCategory = categoryModel.create(
+            'Personal',
+            'Personal goals and activities',
+            '#10b981'
+        );
+        personalCategory.isWelcomeCategory = true;
+        categoryModel.update(personalCategory.id, { isWelcomeCategory: true });
+        await new Promise(resolve => setTimeout(resolve, 100)); // Small delay
 
-    // Activity 1: Work - Pending, due soon
-    activityModel.create({
-        title: 'Prepare presentation slides',
-        description: 'Create slides for the quarterly review meeting',
-        categoryId: workCategory.id,
-        status: 'not-started',
-        dueDate: today.getTime() + (2 * 24 * 60 * 60 * 1000), // 2 days from now
-        notes: 'Include Q4 metrics and team achievements',
-        resources: [],
-        isWelcomeActivity: true
-    });
+        const learningCategory = categoryModel.create(
+            'Learning',
+            'Educational and skill development',
+            '#f59e0b'
+        );
+        learningCategory.isWelcomeCategory = true;
+        categoryModel.update(learningCategory.id, { isWelcomeCategory: true });
+        await new Promise(resolve => setTimeout(resolve, 100)); // Small delay
 
-    // Activity 2: Learning - In progress
-    activityModel.create({
-        title: 'Complete online course',
-        description: 'Finish the data analysis fundamentals course',
-        categoryId: learningCategory.id,
-        status: 'in-progress',
-        dueDate: today.getTime() + (7 * 24 * 60 * 60 * 1000), // 7 days from now
-        notes: 'Currently on module 3 of 5',
-        resources: [],
-        isWelcomeActivity: true
-    });
+        // Activity 1: Work - Pending, due soon
+        activityModel.create({
+            title: 'Prepare presentation slides',
+            description: 'Create slides for the quarterly review meeting',
+            categoryId: workCategory.id,
+            status: 'not-started',
+            dueDate: today.getTime() + (2 * 24 * 60 * 60 * 1000), // 2 days from now
+            notes: 'Include Q4 metrics and team achievements',
+            resources: [],
+            isWelcomeActivity: true
+        });
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-    // Activity 3: Personal - Completed yesterday (builds streak!)
-    const completedActivity1 = activityModel.create({
-        title: 'Morning workout',
-        description: '30-minute exercise routine',
-        categoryId: personalCategory.id,
-        status: 'not-started',
-        dueDate: null,
-        notes: 'Felt great after the workout!',
-        resources: [],
-        isWelcomeActivity: true
-    });
-    // Mark as completed yesterday
-    completedActivity1.status = 'completed';
-    completedActivity1.completedAt = today.getTime() - (24 * 60 * 60 * 1000); // Yesterday
-    activityModel.update(completedActivity1.id, completedActivity1);
+        // Activity 2: Learning - In progress
+        activityModel.create({
+            title: 'Complete online course',
+            description: 'Finish the data analysis fundamentals course',
+            categoryId: learningCategory.id,
+            status: 'in-progress',
+            dueDate: today.getTime() + (7 * 24 * 60 * 60 * 1000), // 7 days from now
+            notes: 'Currently on module 3 of 5',
+            resources: [],
+            isWelcomeActivity: true
+        });
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-    // Activity 4: Work - Pending
-    activityModel.create({
-        title: 'Review project proposal',
-        description: 'Review and provide feedback on the new project plan',
-        categoryId: workCategory.id,
-        status: 'not-started',
-        dueDate: today.getTime() + (5 * 24 * 60 * 60 * 1000), // 5 days from now
-        notes: '',
-        resources: [],
-        isWelcomeActivity: true
-    });
+        // Activity 3: Personal - Completed yesterday (builds streak!)
+        const completedActivity1 = activityModel.create({
+            title: 'Morning workout',
+            description: '30-minute exercise routine',
+            categoryId: personalCategory.id,
+            status: 'not-started',
+            dueDate: null,
+            notes: 'Felt great after the workout!',
+            resources: [],
+            isWelcomeActivity: true
+        });
+        // Mark as completed yesterday
+        completedActivity1.status = 'completed';
+        completedActivity1.completedAt = today.getTime() - (24 * 60 * 60 * 1000); // Yesterday
+        activityModel.update(completedActivity1.id, completedActivity1);
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-    // Activity 5: Personal - Completed 2 days ago
-    const completedActivity2 = activityModel.create({
-        title: 'Organize home office',
-        description: 'Declutter and reorganize workspace',
-        categoryId: personalCategory.id,
-        status: 'not-started',
-        dueDate: null,
-        notes: 'Desk is much cleaner now!',
-        resources: [],
-        isWelcomeActivity: true
-    });
-    // Mark as completed 2 days ago
-    completedActivity2.status = 'completed';
-    completedActivity2.completedAt = today.getTime() - (2 * 24 * 60 * 60 * 1000); // 2 days ago
-    activityModel.update(completedActivity2.id, completedActivity2);
+        // Activity 4: Work - Pending
+        activityModel.create({
+            title: 'Review project proposal',
+            description: 'Review and provide feedback on the new project plan',
+            categoryId: workCategory.id,
+            status: 'not-started',
+            dueDate: today.getTime() + (5 * 24 * 60 * 60 * 1000), // 5 days from now
+            notes: '',
+            resources: [],
+            isWelcomeActivity: true
+        });
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-    console.log('Welcome categories and activities created!');
+        // Activity 5: Personal - Completed 2 days ago
+        const completedActivity2 = activityModel.create({
+            title: 'Organize home office',
+            description: 'Declutter and reorganize workspace',
+            categoryId: personalCategory.id,
+            status: 'not-started',
+            dueDate: null,
+            notes: 'Desk is much cleaner now!',
+            resources: [],
+            isWelcomeActivity: true
+        });
+        // Mark as completed 2 days ago
+        completedActivity2.status = 'completed';
+        completedActivity2.completedAt = today.getTime() - (2 * 24 * 60 * 60 * 1000); // 2 days ago
+        activityModel.update(completedActivity2.id, completedActivity2);
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        console.log('Welcome categories and activities created!');
+
+    } finally {
+        // Restore original toast function
+        UIController.showToast = originalShowToast;
+    }
 
     // Show welcome banner
     showWelcomeBanner();
@@ -234,7 +255,7 @@ function clearWelcomeExamples() {
 /**
  * Load example data for existing users (called from settings)
  */
-function loadExampleData() {
+async function loadExampleData() {
     // Check if examples already exist
     if (hasWelcomeExamples()) {
         if (!confirm('Example data already exists. This will add more examples. Continue?')) {
@@ -243,7 +264,7 @@ function loadExampleData() {
     }
 
     // Create welcome activities and categories
-    createWelcomeActivities();
+    await createWelcomeActivities();
 
     // Close settings modal
     const settingsModal = document.getElementById('settings-modal');
