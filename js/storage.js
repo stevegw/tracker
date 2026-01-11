@@ -48,7 +48,8 @@ const Storage = {
             fontSize: 'xlarge', // Default: 'xlarge' for better mobile readability
             darkMode: false, // Default: light mode
             appTitle: 'My Tracker', // Default app title
-            appSubtitle: 'Track your progress' // Default subtitle
+            appSubtitle: 'Track your progress', // Default subtitle
+            confettiEnabled: true // Default: confetti enabled
         };
     },
 

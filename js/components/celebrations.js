@@ -7,8 +7,12 @@ const CelebrationComponent = {
      * Celebrate activity completion with confetti
      */
     celebrate(activityElement) {
+        // Check if confetti is enabled in settings
+        const settings = Storage.getSettings();
+        const confettiEnabled = settings.confettiEnabled !== false; // Default true
+
         // Confetti burst
-        if (typeof confetti !== 'undefined') {
+        if (confettiEnabled && typeof confetti !== 'undefined') {
             confetti({
                 particleCount: 100,
                 spread: 70,
@@ -17,7 +21,7 @@ const CelebrationComponent = {
             });
         }
 
-        // Add completion animation to activity card
+        // Add completion animation to activity card (always show this)
         if (activityElement) {
             activityElement.classList.add('completed-animation');
             setTimeout(() => {
@@ -25,8 +29,8 @@ const CelebrationComponent = {
             }, 600);
         }
 
-        // Optional sound effect (subtle chime)
-        if (this.soundEnabled) {
+        // Optional sound effect (subtle chime) - only if confetti enabled
+        if (confettiEnabled && this.soundEnabled) {
             this.playSuccessSound();
         }
     },
@@ -38,8 +42,12 @@ const CelebrationComponent = {
         const milestones = [3, 7, 14, 30, 60, 100];
 
         if (milestones.includes(days)) {
+            // Check if confetti is enabled in settings
+            const settings = Storage.getSettings();
+            const confettiEnabled = settings.confettiEnabled !== false; // Default true
+
             // Big confetti burst for milestones
-            if (typeof confetti !== 'undefined') {
+            if (confettiEnabled && typeof confetti !== 'undefined') {
                 const duration = 2000;
                 const end = Date.now() + duration;
 
@@ -65,13 +73,13 @@ const CelebrationComponent = {
                 }());
             }
 
-            // Show milestone toast
+            // Show milestone toast (always show)
             const emoji = days >= 30 ? '🎉' : days >= 7 ? '🔥' : '⭐';
             const message = `${emoji} ${days} day streak! You're on fire!`;
             UIController.showToast(message, 'success');
 
-            // Play special sound
-            if (this.soundEnabled) {
+            // Play special sound - only if confetti enabled
+            if (confettiEnabled && this.soundEnabled) {
                 this.playMilestoneSound();
             }
         }

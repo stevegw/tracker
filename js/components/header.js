@@ -116,6 +116,12 @@ const HeaderComponent = {
             notificationsToggle.checked = settings.notificationsEnabled;
         }
 
+        // Confetti toggle
+        const confettiToggle = document.getElementById('confetti-toggle');
+        if (confettiToggle) {
+            confettiToggle.checked = settings.confettiEnabled !== false; // Default true
+        }
+
         // Font size select
         const fontSizeSelect = document.getElementById('font-size-select');
         if (fontSizeSelect) {
@@ -256,6 +262,18 @@ const HeaderComponent = {
                     Storage.saveSettings(settings);
                     UIController.showToast('Notifications disabled', 'success');
                 }
+            });
+        }
+
+        // Confetti toggle
+        const confettiToggle = document.getElementById('confetti-toggle');
+        if (confettiToggle) {
+            confettiToggle.addEventListener('change', (e) => {
+                const enabled = e.target.checked;
+                const settings = Storage.getSettings();
+                settings.confettiEnabled = enabled;
+                Storage.saveSettings(settings);
+                UIController.showToast(enabled ? 'Confetti enabled 🎉' : 'Confetti disabled', 'success');
             });
         }
 
