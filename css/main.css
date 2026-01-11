@@ -490,40 +490,89 @@ body {
 @media (max-width: 768px) {
     .header {
         padding: var(--spacing-sm);
+        position: relative;
     }
 
     .header-left {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
         margin-bottom: var(--spacing-sm);
+        padding-right: 80px; /* Space for sign out button */
+    }
+
+    /* Mobile menu button on left */
+    .mobile-menu-btn {
+        display: inline-flex !important;
+        flex-shrink: 0;
     }
 
     .header-title {
         font-size: 16px;
+        margin-bottom: 0;
     }
 
     .header-subtitle {
-        font-size: 11px;
+        display: none; /* Hide subtitle on mobile to save space */
     }
 
     .header-stats {
         display: none;
     }
 
-    /* Show mobile menu button */
-    .mobile-menu-btn {
-        display: inline-flex !important;
-        order: -1;
+    /* User menu fixed in top right corner */
+    #user-menu {
+        position: absolute !important;
+        top: var(--spacing-sm);
+        right: var(--spacing-sm);
+        margin: 0 !important;
+        gap: 4px !important;
     }
 
+    #user-email {
+        display: none !important;
+    }
+
+    #sign-out-btn {
+        padding: 6px 10px !important;
+        font-size: 11px !important;
+    }
+
+    /* Auth button also in top right */
+    #auth-btn {
+        position: absolute !important;
+        top: var(--spacing-sm);
+        right: var(--spacing-sm);
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+
+    /* Action buttons row with search on left */
     .header-actions {
         flex-wrap: wrap;
         gap: var(--spacing-xs);
     }
 
     .search-input {
-        width: 100%;
-        max-width: none;
+        flex: 1;
+        min-width: 120px;
+        font-size: 13px;
+        order: 0;
+    }
+
+    #add-activity-btn {
+        white-space: nowrap;
+        padding: 6px 10px;
+        font-size: 11px;
         order: 1;
-        margin-bottom: var(--spacing-xs);
+    }
+
+    #stats-btn {
+        order: 2;
+    }
+
+    #settings-btn {
+        order: 3;
     }
 
     .btn {
@@ -533,21 +582,7 @@ body {
 
     .btn-icon {
         padding: 6px;
-    }
-
-    #user-menu {
-        width: 100%;
-        justify-content: flex-end !important;
-        order: 3;
-    }
-
-    #user-email {
-        display: none !important;
-    }
-
-    #auth-btn {
-        width: 100%;
-        order: 2;
+        font-size: 16px;
     }
 
     .main-layout {
