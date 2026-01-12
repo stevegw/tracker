@@ -128,13 +128,7 @@
     flex-shrink: 0; /* Prevent category from shrinking */
     white-space: nowrap; /* Prevent category text from wrapping */
     cursor: pointer;
-    transition: opacity 0.2s ease;
-    opacity: 0.85;
-}
-
-.activity-category-tag:hover {
-    opacity: 1;
-    text-decoration: underline;
+    opacity: 0.8;
 }
 
 .activity-card-description {
