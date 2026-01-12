@@ -104,9 +104,9 @@
 
 .activity-title-row {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-md);
 }
 
 .activity-card-title {
@@ -114,6 +114,8 @@
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: var(--spacing-xs);
+    flex: 1;
+    min-width: 0; /* Allow text to wrap */
 }
 
 .activity-category-inline {
@@ -124,6 +126,8 @@
     align-items: center;
     gap: 4px;
     margin-bottom: var(--spacing-xs);
+    flex-shrink: 0; /* Prevent category from shrinking */
+    white-space: nowrap; /* Prevent category text from wrapping */
 }
 
 .activity-card-description {
