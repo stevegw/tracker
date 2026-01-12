@@ -7,9 +7,9 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>My Tracker</title>
-    <link rel="stylesheet" href="css/main.css?v=1.0.54">
-    <link rel="stylesheet" href="css/components.css?v=1.0.54">
-    <link rel="stylesheet" href="css/utilities.css?v=1.0.54">
+    <link rel="stylesheet" href="css/main.css?v=1.0.55">
+    <link rel="stylesheet" href="css/components.css?v=1.0.55">
+    <link rel="stylesheet" href="css/utilities.css?v=1.0.55">
 </head>
 <body>
     <!-- Header -->
@@ -43,10 +43,11 @@
     </header>
 
     <!-- Auth Prompt (shown when not logged in) -->
-    <div id="auth-prompt" style="display: none; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; background: var(--surface); margin: 40px; border-radius: 12px; text-align: center;">
-        <h2 style="margin-bottom: 16px;">Welcome to My Tracker</h2>
-        <p style="color: var(--text-secondary); margin-bottom: 24px; max-width: 500px;">
-            Track your activities, monitor progress, and stay focused on completing your goals.
+    <div id="auth-prompt" style="display: none; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; background: var(--surface); margin: 40px; border-radius: 16px; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 20px;">👋</div>
+        <h2 style="margin-bottom: 16px; font-size: 28px;">Welcome to My Tracker!</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 24px; max-width: 500px; font-size: 16px; line-height: 1.6;">
+            Track your tasks, build momentum, and celebrate your wins. Let's get started! 🚀
         </p>
         <button class="btn btn-primary" id="auth-prompt-btn">Sign In to Get Started</button>
     </div>
@@ -91,7 +92,7 @@
                     <div id="command-bar-suggestions" class="command-suggestions"></div>
                 </div>
                 <p class="command-bar-hint">
-                    Try: <code>@category</code> for categories • <code>tomorrow</code> or <code>Friday</code> for due dates • <code>Enter</code> to create
+                    💡 Try: <code>@category</code> for categories • <code>tomorrow</code> or <code>Friday</code> for due dates • Press <code>Enter</code> to create!
                 </p>
             </div>
 
@@ -462,20 +463,20 @@
 
     <!-- version.js must NOT have cache-busting param - it needs to run fresh every time to check for updates -->
     <script src="js/version.js"></script>
-    <script src="js/utils.js?v=1.0.54"></script>
-    <script src="js/storage.js?v=1.0.54"></script>
-    <script src="js/supabase-client.js?v=1.0.54"></script>
-    <script src="js/models.js?v=1.0.54"></script>
-    <script src="js/supabase-sync.js?v=1.0.54"></script>
-    <script src="js/components/auth.js?v=1.0.54"></script>
-    <script src="js/components/command-bar.js?v=1.0.54"></script>
-    <script src="js/components/celebrations.js?v=1.0.54"></script>
-    <script src="js/components/header.js?v=1.0.54"></script>
-    <script src="js/components/sidebar.js?v=1.0.54"></script>
-    <script src="js/components/activity-list.js?v=1.0.54"></script>
-    <script src="js/components/activity-form.js?v=1.0.54"></script>
-    <script src="js/components/stats-dashboard.js?v=1.0.54"></script>
-    <script src="js/ui.js?v=1.0.54"></script>
-    <script src="js/app.js?v=1.0.54"></script>
+    <script src="js/utils.js?v=1.0.55"></script>
+    <script src="js/storage.js?v=1.0.55"></script>
+    <script src="js/supabase-client.js?v=1.0.55"></script>
+    <script src="js/models.js?v=1.0.55"></script>
+    <script src="js/supabase-sync.js?v=1.0.55"></script>
+    <script src="js/components/auth.js?v=1.0.55"></script>
+    <script src="js/components/command-bar.js?v=1.0.55"></script>
+    <script src="js/components/celebrations.js?v=1.0.55"></script>
+    <script src="js/components/header.js?v=1.0.55"></script>
+    <script src="js/components/sidebar.js?v=1.0.55"></script>
+    <script src="js/components/activity-list.js?v=1.0.55"></script>
+    <script src="js/components/activity-form.js?v=1.0.55"></script>
+    <script src="js/components/stats-dashboard.js?v=1.0.55"></script>
+    <script src="js/ui.js?v=1.0.55"></script>
+    <script src="js/app.js?v=1.0.55"></script>
 </body>
 </html>

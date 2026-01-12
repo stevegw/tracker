@@ -17,8 +17,9 @@ const ActivityListComponent = {
         if (!activities || activities.length === 0) {
             activityList.innerHTML = `
                 <div class="empty-state">
-                    <h2>No activities found</h2>
-                    <p>Create your first activity to get started tracking your progress.</p>
+                    <div class="empty-state-icon">📋</div>
+                    <h2>Nothing here yet!</h2>
+                    <p>Add your first task above using the command bar, or click the button below 👇</p>
                     <button class="btn btn-primary" onclick="ActivityFormComponent.show()">+ Create Activity</button>
                 </div>
             `;
