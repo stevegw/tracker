@@ -84,6 +84,23 @@ const SidebarComponent = {
     },
 
     /**
+     * Toggle category section collapse/expand
+     */
+    toggleCategoryCollapse() {
+        const content = document.getElementById('category-section-content');
+        const btn = document.getElementById('category-collapse-btn');
+
+        if (!content || !btn) return;
+
+        content.classList.toggle('collapsed');
+        btn.classList.toggle('collapsed');
+
+        // Save preference to localStorage
+        const isCollapsed = content.classList.contains('collapsed');
+        localStorage.setItem('category_section_collapsed', isCollapsed);
+    },
+
+    /**
      * Show category form modal for creating
      */
     showAddCategoryModal() {
@@ -226,6 +243,15 @@ const SidebarComponent = {
                     this.hideCategoryModal();
                 }
             });
+        }
+
+        // Restore category section collapsed state from localStorage
+        const isCollapsed = localStorage.getItem('category_section_collapsed') === 'true';
+        if (isCollapsed) {
+            const content = document.getElementById('category-section-content');
+            const btn = document.getElementById('category-collapse-btn');
+            if (content) content.classList.add('collapsed');
+            if (btn) btn.classList.add('collapsed');
         }
 
         // Initial render

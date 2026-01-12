@@ -76,10 +76,13 @@ const ActivityListComponent = {
             </div>
         ` : '';
 
-        // Create inline category label
+        // Create inline category tag (clickable pill)
         const categoryLabel = category ? `
-            <span class="activity-category-inline" style="color: ${category.color};">
-                📁 ${escapeHTML(category.name)}
+            <span class="activity-category-tag"
+                  style="background: ${category.color}20; color: ${category.color}; border: 1px solid ${category.color}40;"
+                  onclick="ActivityListComponent.filterByCategory('${category.id}', event)"
+                  title="Filter by ${escapeHTML(category.name)}">
+                ${escapeHTML(category.name)}
             </span>
         ` : '';
 
@@ -479,6 +482,21 @@ const ActivityListComponent = {
             UIController.showToast('Activity deleted', 'success');
             UIController.refresh();
         }
+    },
+
+    /**
+     * Filter by category when clicking category tag
+     */
+    filterByCategory(categoryId, event) {
+        if (event) {
+            event.stopPropagation();
+        }
+
+        // Update sidebar to show this category as selected
+        SidebarComponent.selectCategory(categoryId);
+
+        // Trigger filter update
+        UIController.applyFilters();
     },
 
     /**
