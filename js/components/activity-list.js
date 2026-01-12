@@ -76,13 +76,13 @@ const ActivityListComponent = {
             </div>
         ` : '';
 
-        // Create inline category tag (clickable pill)
+        // Create inline category label (clickable, not button-like)
         const categoryLabel = category ? `
             <span class="activity-category-tag"
-                  style="background: ${category.color}20; color: ${category.color}; border: 1px solid ${category.color}40;"
+                  style="color: ${category.color};"
                   onclick="ActivityListComponent.filterByCategory('${category.id}', event)"
                   title="Filter by ${escapeHTML(category.name)}">
-                ${escapeHTML(category.name)}
+                📁 ${escapeHTML(category.name)}
             </span>
         ` : '';
 
