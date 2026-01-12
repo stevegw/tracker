@@ -110,8 +110,11 @@ const SupabaseSync = {
         if (!user) return;
 
         try {
+            // Remove local-only fields that don't exist in database
+            const { isWelcomeCategory, ...categoryToSync } = category;
+
             // Convert to snake_case for database
-            const snakeCategory = this.toSnakeCase(category);
+            const snakeCategory = this.toSnakeCase(categoryToSync);
             const categoryData = {
                 ...snakeCategory,
                 user_id: user.id
@@ -130,6 +133,7 @@ const SupabaseSync = {
 
         } catch (error) {
             console.error('Error saving category:', error);
+            console.error('Category data that failed:', categoryData);
             UIController.showToast('Error syncing category', 'error');
         }
     },
@@ -166,8 +170,11 @@ const SupabaseSync = {
         if (!user) return;
 
         try {
+            // Remove local-only fields that don't exist in database
+            const { isWelcomeActivity, ...activityToSync } = activity;
+
             // Convert to snake_case for database
-            const snakeActivity = this.toSnakeCase(activity);
+            const snakeActivity = this.toSnakeCase(activityToSync);
             const activityData = {
                 ...snakeActivity,
                 user_id: user.id
@@ -186,6 +193,7 @@ const SupabaseSync = {
 
         } catch (error) {
             console.error('Error saving activity:', error);
+            console.error('Activity data that failed:', activityData);
             UIController.showToast('Error syncing activity', 'error');
         }
     },
