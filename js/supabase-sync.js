@@ -96,6 +96,11 @@ const SupabaseSync = {
             console.log('Data loaded from Supabase');
 
         } catch (error) {
+            // Ignore AbortError - happens during page refresh
+            if (error.name === 'AbortError') {
+                console.log('Supabase load aborted (page refresh)');
+                return;
+            }
             console.error('Error loading from Supabase:', error);
         }
 
@@ -132,6 +137,11 @@ const SupabaseSync = {
             return data[0] ? this.toCamelCase(data[0]) : null;
 
         } catch (error) {
+            // Ignore AbortError - happens during page refresh
+            if (error.name === 'AbortError') {
+                console.log('Category save aborted (page refresh)');
+                return;
+            }
             console.error('Error saving category:', error);
             console.error('Category data that failed:', categoryData);
             UIController.showToast('Error syncing category', 'error');
@@ -157,6 +167,11 @@ const SupabaseSync = {
             console.log('Category deleted from Supabase');
 
         } catch (error) {
+            // Ignore AbortError - happens during page refresh
+            if (error.name === 'AbortError') {
+                console.log('Category delete aborted (page refresh)');
+                return;
+            }
             console.error('Error deleting category:', error);
             UIController.showToast('Error deleting category', 'error');
         }
@@ -192,6 +207,11 @@ const SupabaseSync = {
             return data[0] ? this.toCamelCase(data[0]) : null;
 
         } catch (error) {
+            // Ignore AbortError - happens during page refresh
+            if (error.name === 'AbortError') {
+                console.log('Activity save aborted (page refresh)');
+                return;
+            }
             console.error('Error saving activity:', error);
             console.error('Activity data that failed:', activityData);
             UIController.showToast('Error syncing activity', 'error');
@@ -217,6 +237,11 @@ const SupabaseSync = {
             console.log('Activity deleted from Supabase');
 
         } catch (error) {
+            // Ignore AbortError - happens during page refresh
+            if (error.name === 'AbortError') {
+                console.log('Activity delete aborted (page refresh)');
+                return;
+            }
             console.error('Error deleting activity:', error);
             UIController.showToast('Error deleting activity', 'error');
         }

@@ -58,6 +58,11 @@ async function checkVersionAndReload() {
         return false;
 
     } catch (error) {
+        // Ignore AbortError - this happens when page refreshes during fetch
+        if (error.name === 'AbortError') {
+            console.log('Version check aborted (page refresh)');
+            return false;
+        }
         console.error('Error checking version:', error);
         return false;
     }
