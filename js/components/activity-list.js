@@ -76,11 +76,21 @@ const ActivityListComponent = {
             </div>
         ` : '';
 
+        // Create inline category label
+        const categoryLabel = category ? `
+            <span class="activity-category-inline" style="color: ${category.color};">
+                📁 ${escapeHTML(category.name)}
+            </span>
+        ` : '';
+
         card.innerHTML = `
             <div class="activity-card-header">
                 ${checkboxHtml}
                 <div style="flex: 1;">
-                    <h3 class="activity-card-title">${escapeHTML(activity.title)}</h3>
+                    <div class="activity-title-row">
+                        <h3 class="activity-card-title">${escapeHTML(activity.title)}</h3>
+                        ${categoryLabel}
+                    </div>
                     ${activity.description ? `<p class="activity-card-description">${escapeHTML(activity.description)}</p>` : ''}
                 </div>
             </div>
@@ -112,15 +122,6 @@ const ActivityListComponent = {
     createBadges(activity, category) {
         const leftBadges = [];
         const rightBadges = [];
-
-        // Category badge (visual tag with color) - LEFT
-        if (category) {
-            leftBadges.push(`
-                <span class="activity-badge badge-category" style="background: ${category.color}20; color: ${category.color}; border: 1.5px solid ${category.color};">
-                    ${escapeHTML(category.name)}
-                </span>
-            `);
-        }
 
         // Cadence badge (only show if not one-time) - LEFT
         if (activity.cadence && activity.cadence !== 'one-time') {
