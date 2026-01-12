@@ -141,16 +141,25 @@ const ActivityListComponent = {
             `);
         }
 
-        // Status badge - LEFT
+        // Status badge - LEFT (clickable with dropdown)
         const statusLabels = {
             'not-started': 'Not Started',
             'in-progress': 'In Progress',
             'completed': 'Completed'
         };
+
+        // Create status transition menu based on current status
+        const statusMenu = this.createStatusMenu(activity);
+
         leftBadges.push(`
-            <span class="activity-badge badge-status ${activity.status}">
-                ${statusLabels[activity.status]}
+            <span class="activity-badge badge-status ${activity.status} status-badge-clickable"
+                  data-activity-id="${activity.id}"
+                  onclick="ActivityListComponent.toggleStatusMenu('${activity.id}', event)">
+                ${statusLabels[activity.status]} ▼
             </span>
+            <div class="status-menu-dropdown" id="status-menu-${activity.id}">
+                ${statusMenu}
+            </div>
         `);
 
         // Due date badge - RIGHT
@@ -232,6 +241,81 @@ const ActivityListComponent = {
         `);
 
         return items.join('');
+    },
+
+    /**
+     * Create status transition menu
+     */
+    createStatusMenu(activity) {
+        const items = [];
+
+        // Define possible transitions based on current status
+        if (activity.status === 'not-started') {
+            items.push(`
+                <button class="status-menu-item" onclick="ActivityListComponent.changeStatus('${activity.id}', 'in-progress'); event.stopPropagation();">
+                    ▶ Start
+                </button>
+            `);
+            items.push(`
+                <button class="status-menu-item" onclick="ActivityListComponent.changeStatus('${activity.id}', 'completed'); event.stopPropagation();">
+                    ✓ Mark Complete
+                </button>
+            `);
+        } else if (activity.status === 'in-progress') {
+            items.push(`
+                <button class="status-menu-item" onclick="ActivityListComponent.changeStatus('${activity.id}', 'completed'); event.stopPropagation();">
+                    ✓ Mark Complete
+                </button>
+            `);
+            items.push(`
+                <button class="status-menu-item" onclick="ActivityListComponent.changeStatus('${activity.id}', 'not-started'); event.stopPropagation();">
+                    ↶ Reset to Not Started
+                </button>
+            `);
+        } else if (activity.status === 'completed') {
+            items.push(`
+                <button class="status-menu-item" onclick="ActivityListComponent.changeStatus('${activity.id}', 'in-progress'); event.stopPropagation();">
+                    ↶ Reopen
+                </button>
+            `);
+            items.push(`
+                <button class="status-menu-item" onclick="ActivityListComponent.changeStatus('${activity.id}', 'not-started'); event.stopPropagation();">
+                    ↶ Reset to Not Started
+                </button>
+            `);
+        }
+
+        return items.join('');
+    },
+
+    /**
+     * Toggle status menu dropdown
+     */
+    toggleStatusMenu(activityId, event) {
+        event.stopPropagation();
+        const menu = document.getElementById(`status-menu-${activityId}`);
+        if (!menu) return;
+
+        // Close all other status menus and activity menus
+        document.querySelectorAll('.status-menu-dropdown.active, .activity-menu-dropdown.active').forEach(m => {
+            if (m.id !== `status-menu-${activityId}`) {
+                m.classList.remove('active');
+            }
+        });
+
+        menu.classList.toggle('active');
+    },
+
+    /**
+     * Change activity status from quick menu
+     */
+    changeStatus(activityId, newStatus) {
+        this.updateActivityStatus(activityId, newStatus);
+        // Close the menu
+        const menu = document.getElementById(`status-menu-${activityId}`);
+        if (menu) {
+            menu.classList.remove('active');
+        }
     },
 
     /**

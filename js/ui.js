@@ -229,6 +229,13 @@ const UIController = {
                     menu.classList.remove('active');
                 });
             }
+
+            // Close status menus when clicking outside
+            if (!e.target.closest('.status-badge-clickable')) {
+                document.querySelectorAll('.status-menu-dropdown.active').forEach(menu => {
+                    menu.classList.remove('active');
+                });
+            }
         });
     },
 
