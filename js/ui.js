@@ -188,7 +188,7 @@ const UIController = {
         const overdueFilter = document.getElementById('overdue-filter');
         const dueSoonFilter = document.getElementById('due-soon-filter');
 
-        if (statusFilter) statusFilter.value = '';
+        if (statusFilter) statusFilter.value = 'not-completed';
         if (sortBy) sortBy.value = 'updatedAt';
         if (overdueFilter) overdueFilter.checked = false;
         if (dueSoonFilter) dueSoonFilter.checked = false;

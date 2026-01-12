@@ -302,7 +302,12 @@ class ActivityModel {
         }
 
         if (filters.status) {
-            result = result.filter(act => act.status === filters.status);
+            if (filters.status === 'not-completed') {
+                // Filter to show all activities except completed ones
+                result = result.filter(act => act.status !== 'completed');
+            } else {
+                result = result.filter(act => act.status === filters.status);
+            }
         }
 
         if (filters.overdue) {
