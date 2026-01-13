@@ -258,7 +258,10 @@ const AuthComponent = {
         try {
             const { data, error } = await supabaseClient.auth.signUp({
                 email,
-                password
+                password,
+                options: {
+                    emailRedirectTo: 'https://stevegw.github.io/tracker'
+                }
             });
 
             if (error) throw error;
