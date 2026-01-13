@@ -210,8 +210,16 @@ function hasWelcomeExamples() {
  */
 function showWelcomeBanner() {
     const banner = document.getElementById('welcome-banner');
-    if (banner && hasWelcomeExamples()) {
+    if (!banner) return;
+
+    const activityModel = new ActivityModel();
+    const activities = activityModel.getAll();
+
+    // Only show if welcome examples exist AND there are actual activities
+    if (hasWelcomeExamples() && activities.length > 0) {
         banner.style.display = 'flex';
+    } else {
+        banner.style.display = 'none';
     }
 }
 

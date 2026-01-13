@@ -288,6 +288,10 @@ const UIController = {
         HeaderComponent.update();
         SidebarComponent.render();
         this.applyFilters();
+        // Recheck welcome banner visibility
+        if (typeof showWelcomeBanner === 'function') {
+            showWelcomeBanner();
+        }
     },
 
     /**
