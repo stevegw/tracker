@@ -58,6 +58,64 @@ const ActivityFormComponent = {
     },
 
     /**
+     * Show activity form modal with pre-populated data from command bar
+     */
+    showWithParsedData(parsed) {
+        const modal = document.getElementById('activity-modal');
+        const title = document.getElementById('activity-modal-title');
+        const form = document.getElementById('activity-form');
+
+        if (!modal || !title || !form) return;
+
+        // Populate category select
+        this.populateCategorySelect();
+
+        // Set to create mode
+        title.textContent = 'New Activity';
+        form.reset();
+        document.getElementById('activity-id').value = '';
+        this.currentResources = [];
+        this.renderResources();
+
+        // Pre-populate fields from parsed data
+        if (parsed.title) {
+            document.getElementById('activity-title').value = parsed.title;
+        }
+
+        if (parsed.categoryId) {
+            document.getElementById('activity-category').value = parsed.categoryId;
+        }
+
+        if (parsed.dueDate) {
+            const dateInput = timestampToDateInput(parsed.dueDate);
+            document.getElementById('activity-due-date').value = dateInput;
+        }
+
+        if (parsed.cadence) {
+            document.getElementById('activity-cadence').value = parsed.cadence;
+        }
+
+        if (parsed.status) {
+            document.getElementById('activity-status').value = parsed.status;
+        }
+
+        // Clear modal command bar
+        if (this.modalCommandBarInput) {
+            this.modalCommandBarInput.value = '';
+        }
+
+        modal.classList.add('active');
+
+        // Focus on title field for immediate editing
+        setTimeout(() => {
+            document.getElementById('activity-title').focus();
+            // Move cursor to end of text
+            const titleInput = document.getElementById('activity-title');
+            titleInput.setSelectionRange(titleInput.value.length, titleInput.value.length);
+        }, 100);
+    },
+
+    /**
      * Hide activity form modal
      */
     hide() {
