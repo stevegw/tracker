@@ -11,7 +11,6 @@ const UIController = {
         SidebarComponent.init();
         ActivityFormComponent.init();
         StatsDashboardComponent.init();
-        GenesisClassBrowserComponent.init();
         ScheduleImportComponent.init();
         ScheduleLookupComponent.init();
 
