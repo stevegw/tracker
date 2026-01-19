@@ -7,9 +7,9 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>My Tracker</title>
-    <link rel="stylesheet" href="css/main.css?v=1.0.62">
-    <link rel="stylesheet" href="css/components.css?v=1.0.62">
-    <link rel="stylesheet" href="css/utilities.css?v=1.0.62">
+    <link rel="stylesheet" href="css/main.css?v=1.0.63">
+    <link rel="stylesheet" href="css/components.css?v=1.0.63">
+    <link rel="stylesheet" href="css/utilities.css?v=1.0.63">
 </head>
 <body>
     <!-- Header -->
@@ -96,6 +96,7 @@
                 <button class="btn btn-secondary" id="filters-btn">🔍 Filters & Sort</button>
                 <button class="btn btn-secondary" id="genesis-classes-btn">🏋️ Genesis Classes</button>
                 <button class="btn btn-secondary" id="schedule-import-trigger-btn">📅 Import Schedule</button>
+                <button class="btn btn-secondary" id="schedule-lookup-trigger-btn">📋 Schedule Lookup</button>
                 <button class="btn btn-secondary" id="toggle-selection-btn" onclick="ActivityListComponent.toggleSelectionMode()">☑ Select</button>
             </div>
 
@@ -579,6 +580,24 @@
         </div>
     </div>
 
+    <!-- Schedule Lookup Modal -->
+    <div class="modal" id="schedule-lookup-modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>📋 Schedule Lookup</h2>
+                <button class="modal-close" id="schedule-lookup-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary); margin-bottom: 24px;">
+                    Browse your imported lookup schedules and add them to your activities list.
+                </p>
+                <div id="schedule-lookup-list">
+                    <!-- Lookup schedules will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
 
@@ -593,23 +612,24 @@
 
     <!-- version.js must NOT have cache-busting param - it needs to run fresh every time to check for updates -->
     <script src="js/version.js"></script>
-    <script src="js/utils.js?v=1.0.62"></script>
-    <script src="js/storage.js?v=1.0.62"></script>
-    <script src="js/supabase-client.js?v=1.0.62"></script>
-    <script src="js/models.js?v=1.0.62"></script>
-    <script src="js/supabase-sync.js?v=1.0.62"></script>
-    <script src="js/components/auth.js?v=1.0.62"></script>
-    <script src="js/components/command-bar.js?v=1.0.62"></script>
-    <script src="js/components/celebrations.js?v=1.0.62"></script>
-    <script src="js/components/header.js?v=1.0.62"></script>
-    <script src="js/components/sidebar.js?v=1.0.62"></script>
-    <script src="js/components/activity-list.js?v=1.0.62"></script>
-    <script src="js/components/activity-form.js?v=1.0.62"></script>
-    <script src="js/components/stats-dashboard.js?v=1.0.62"></script>
-    <script src="js/genesis-classes-data.js?v=1.0.62"></script>
-    <script src="js/components/genesis-class-browser.js?v=1.0.62"></script>
-    <script src="js/components/schedule-import.js?v=1.0.62"></script>
-    <script src="js/ui.js?v=1.0.62"></script>
-    <script src="js/app.js?v=1.0.62"></script>
+    <script src="js/utils.js?v=1.0.63"></script>
+    <script src="js/storage.js?v=1.0.63"></script>
+    <script src="js/supabase-client.js?v=1.0.63"></script>
+    <script src="js/models.js?v=1.0.63"></script>
+    <script src="js/supabase-sync.js?v=1.0.63"></script>
+    <script src="js/components/auth.js?v=1.0.63"></script>
+    <script src="js/components/command-bar.js?v=1.0.63"></script>
+    <script src="js/components/celebrations.js?v=1.0.63"></script>
+    <script src="js/components/header.js?v=1.0.63"></script>
+    <script src="js/components/sidebar.js?v=1.0.63"></script>
+    <script src="js/components/activity-list.js?v=1.0.63"></script>
+    <script src="js/components/activity-form.js?v=1.0.63"></script>
+    <script src="js/components/stats-dashboard.js?v=1.0.63"></script>
+    <script src="js/genesis-classes-data.js?v=1.0.63"></script>
+    <script src="js/components/genesis-class-browser.js?v=1.0.63"></script>
+    <script src="js/components/schedule-import.js?v=1.0.63"></script>
+    <script src="js/components/schedule-lookup.js?v=1.0.63"></script>
+    <script src="js/ui.js?v=1.0.63"></script>
+    <script src="js/app.js?v=1.0.63"></script>
 </body>
 </html>

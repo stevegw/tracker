@@ -13,6 +13,7 @@ const UIController = {
         StatsDashboardComponent.init();
         GenesisClassBrowserComponent.init();
         ScheduleImportComponent.init();
+        ScheduleLookupComponent.init();
 
         // Initialize filters
         this.initFilters();
