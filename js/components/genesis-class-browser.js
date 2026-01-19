@@ -174,7 +174,9 @@ const GenesisClassBrowserComponent = {
             dueDate: null,
             cadence: 'weekly', // Default to weekly for fitness classes
             status: 'not-started',
-            notes: `Duration: ${classData.duration} min\nDifficulty: ${classData.difficulty}\n${classData.equipment ? 'Equipment: ' + classData.equipment : ''}`
+            notes: `Duration: ${classData.duration} min\nDifficulty: ${classData.difficulty}\n${classData.equipment ? 'Equipment: ' + classData.equipment : ''}`,
+            studio: '', // User will fill in their preferred studio location
+            time: '' // User will fill in the class time
         };
 
         // Hide this modal

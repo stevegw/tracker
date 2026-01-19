@@ -166,6 +166,8 @@ class ActivityModel {
             cadence: data.cadence || 'one-time',
             resources: data.resources || [],
             timeSpent: 0,
+            studio: data.studio || '',
+            time: data.time || '',
             createdAt: Date.now(),
             updatedAt: Date.now()
         };

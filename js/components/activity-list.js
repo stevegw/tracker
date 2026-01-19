@@ -146,6 +146,24 @@ const ActivityListComponent = {
             `);
         }
 
+        // Studio badge - LEFT
+        if (activity.studio && activity.studio.trim()) {
+            leftBadges.push(`
+                <span class="activity-badge badge-studio">
+                    📍 ${escapeHTML(activity.studio)}
+                </span>
+            `);
+        }
+
+        // Time badge - LEFT
+        if (activity.time && activity.time.trim()) {
+            leftBadges.push(`
+                <span class="activity-badge badge-time">
+                    🕐 ${escapeHTML(activity.time)}
+                </span>
+            `);
+        }
+
         // Status badge - LEFT (clickable with dropdown)
         const statusLabels = {
             'not-started': 'Not Started',

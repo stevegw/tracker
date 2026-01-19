@@ -36,6 +36,8 @@ const ActivityFormComponent = {
             document.getElementById('activity-due-date').value = timestampToDateInput(activity.dueDate);
             document.getElementById('activity-notes').value = activity.notes || '';
             document.getElementById('activity-cadence').value = activity.cadence || 'one-time';
+            document.getElementById('activity-studio').value = activity.studio || '';
+            document.getElementById('activity-time').value = activity.time || '';
 
             // Set resources
             this.currentResources = activity.resources || [];
@@ -97,6 +99,14 @@ const ActivityFormComponent = {
 
         if (parsed.status) {
             document.getElementById('activity-status').value = parsed.status;
+        }
+
+        if (parsed.studio) {
+            document.getElementById('activity-studio').value = parsed.studio;
+        }
+
+        if (parsed.time) {
+            document.getElementById('activity-time').value = parsed.time;
         }
 
         // Clear modal command bar
@@ -161,6 +171,8 @@ const ActivityFormComponent = {
         const dueDateValue = document.getElementById('activity-due-date').value;
         const notes = document.getElementById('activity-notes').value;
         const cadence = document.getElementById('activity-cadence').value;
+        const studio = document.getElementById('activity-studio').value;
+        const time = document.getElementById('activity-time').value;
 
         const dueDate = dateInputToTimestamp(dueDateValue);
 
@@ -172,7 +184,9 @@ const ActivityFormComponent = {
             dueDate,
             notes,
             cadence,
-            resources: this.currentResources
+            resources: this.currentResources,
+            studio,
+            time
         };
 
         const activityModel = new ActivityModel();
