@@ -1349,3 +1349,105 @@
         gap: 4px;
     }
 }
+
+/* Schedule Lookup Component */
+.lookup-category-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.lookup-category-header {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 2px solid var(--border);
+}
+
+.lookup-schedules-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.lookup-schedule-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    transition: all 0.2s;
+}
+
+.lookup-schedule-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.lookup-schedule-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.lookup-schedule-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.lookup-schedule-meta {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.lookup-schedule-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.lookup-schedule-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-shrink: 0;
+}
+
+.badge-cadence {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Mobile adjustments for Schedule Lookup */
+@media (max-width: 768px) {
+    .lookup-schedule-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .lookup-schedule-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .lookup-schedule-actions button {
+        flex: 1;
+    }
+
+    .lookup-schedule-meta {
+        flex-direction: column;
+        gap: 4px;
+    }
+}

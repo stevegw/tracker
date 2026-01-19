@@ -130,6 +130,20 @@ class ActivityModel {
     }
 
     /**
+     * Get only regular activities (excludes lookup schedules)
+     */
+    getRegular() {
+        return this.activities.filter(act => act.type !== 'lookup');
+    }
+
+    /**
+     * Get only lookup schedule activities
+     */
+    getLookupSchedules() {
+        return this.activities.filter(act => act.type === 'lookup');
+    }
+
+    /**
      * Get activity by ID
      */
     getById(id) {
@@ -168,6 +182,7 @@ class ActivityModel {
             timeSpent: 0,
             studio: data.studio || '',
             time: data.time || '',
+            type: data.type || 'regular', // 'regular' or 'lookup'
             createdAt: Date.now(),
             updatedAt: Date.now()
         };
@@ -240,6 +255,29 @@ class ActivityModel {
     }
 
     /**
+     * Create a regular activity from a lookup schedule template
+     */
+    createFromLookup(lookupId, overrides = {}) {
+        const lookup = this.getById(lookupId);
+        if (!lookup || lookup.type !== 'lookup') return null;
+
+        // Create a new regular activity based on the lookup template
+        const activityData = {
+            title: lookup.title,
+            description: lookup.description,
+            categoryId: lookup.categoryId,
+            cadence: lookup.cadence,
+            studio: lookup.studio,
+            time: lookup.time,
+            notes: lookup.notes,
+            type: 'regular',
+            ...overrides // Allow overriding any field
+        };
+
+        return this.create(activityData);
+    }
+
+    /**
      * Update activity status
      */
     updateStatus(id, status) {
@@ -296,7 +334,8 @@ class ActivityModel {
      * Filter and sort activities
      */
     filterAndSort(filters = {}, sortBy = 'updatedAt', sortOrder = 'desc') {
-        let result = [...this.activities];
+        // By default, only show regular activities (exclude lookup schedules)
+        let result = filters.includeLookup ? [...this.activities] : this.getRegular();
 
         // Apply filters
         if (filters.categoryId) {
@@ -359,6 +398,7 @@ class ActivityModel {
      */
     getOverdue() {
         return this.activities.filter(act =>
+            act.type !== 'lookup' &&
             act.status !== 'completed' &&
             act.dueDate &&
             isOverdue(act.dueDate)
@@ -370,6 +410,7 @@ class ActivityModel {
      */
     getDueSoon() {
         return this.activities.filter(act =>
+            act.type !== 'lookup' &&
             act.status !== 'completed' &&
             act.dueDate &&
             isDueSoon(act.dueDate)
@@ -393,7 +434,7 @@ class StatsModel {
      * Get overall statistics
      */
     getStats() {
-        const activities = this.activityModel.getAll();
+        const activities = this.activityModel.getRegular(); // Only count regular activities
         const completed = activities.filter(a => a.status === 'completed');
         const completionDates = completed.map(a => a.completedAt).filter(d => d);
 

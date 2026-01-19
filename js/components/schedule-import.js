@@ -297,7 +297,7 @@ const ScheduleImportComponent = {
     },
 
     /**
-     * Import selected classes as activities
+     * Import selected classes as lookup schedule templates
      */
     importSelectedClasses() {
         if (this.selectedClasses.size === 0) {
@@ -316,7 +316,7 @@ const ScheduleImportComponent = {
 
         let importedCount = 0;
 
-        // Create activities for selected classes
+        // Create lookup schedule templates for selected classes
         this.selectedClasses.forEach(key => {
             const [day, indexStr] = key.split('-');
             const index = parseInt(indexStr, 10);
@@ -324,19 +324,17 @@ const ScheduleImportComponent = {
 
             if (!classItem) return;
 
-            // Get the next occurrence of this day/time
-            const dueDate = getNextOccurrenceOfDay(day, classItem.time);
-
-            // Create activity
+            // Create lookup schedule template (not a regular activity)
             activityModel.create({
                 title: classItem.className,
                 description: `${day} at ${classItem.time}`,
                 categoryId: classesCategory.id,
                 cadence: 'weekly',
-                dueDate: dueDate,
+                dueDate: null, // No due date for lookup templates
                 studio: classItem.location,
                 time: classItem.time,
-                notes: `Imported from schedule on ${formatDate(Date.now())}`
+                type: 'lookup', // Mark as lookup schedule
+                notes: `Lookup schedule - imported on ${formatDate(Date.now())}`
             });
 
             importedCount++;
@@ -349,7 +347,7 @@ const ScheduleImportComponent = {
         this.hide();
 
         // Show success message
-        UIController.showToast(`Successfully imported ${importedCount} ${importedCount === 1 ? 'class' : 'classes'}!`, 'success');
+        UIController.showToast(`Successfully imported ${importedCount} lookup ${importedCount === 1 ? 'schedule' : 'schedules'}! Use the Schedule Lookup to add them to your activities.`, 'success');
     },
 
     /**
