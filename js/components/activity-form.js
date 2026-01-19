@@ -2,6 +2,8 @@
 
 const ActivityFormComponent = {
     currentResources: [],
+    currentDescription: '',
+    currentNotes: '',
     modalCommandBarInput: null,
     modalCommandBarSuggestions: null,
     currentSuggestions: [],
@@ -30,26 +32,35 @@ const ActivityFormComponent = {
             title.textContent = 'Edit Activity';
             document.getElementById('activity-id').value = activity.id;
             document.getElementById('activity-title').value = activity.title;
-            document.getElementById('activity-description').value = activity.description || '';
             document.getElementById('activity-category').value = activity.categoryId || '';
             document.getElementById('activity-status').value = activity.status;
             document.getElementById('activity-due-date').value = timestampToDateInput(activity.dueDate);
-            document.getElementById('activity-notes').value = activity.notes || '';
             document.getElementById('activity-cadence').value = activity.cadence || 'one-time';
             document.getElementById('activity-studio').value = activity.studio || '';
             document.getElementById('activity-time').value = activity.time || '';
 
+            // Store details in memory and hidden fields
+            this.currentDescription = activity.description || '';
+            this.currentNotes = activity.notes || '';
+            document.getElementById('activity-description').value = this.currentDescription;
+            document.getElementById('activity-notes').value = this.currentNotes;
+
             // Set resources
             this.currentResources = activity.resources || [];
-            this.renderResources();
+            this.renderDetailsResources();
         } else {
             // Create mode
             title.textContent = 'New Activity';
             form.reset();
             document.getElementById('activity-id').value = '';
+            this.currentDescription = '';
+            this.currentNotes = '';
             this.currentResources = [];
-            this.renderResources();
+            this.renderDetailsResources();
         }
+
+        // Update due date field visibility based on cadence
+        this.updateDueDateVisibility();
 
         // Clear modal command bar
         if (this.modalCommandBarInput) {
@@ -76,8 +87,10 @@ const ActivityFormComponent = {
         title.textContent = 'New Activity';
         form.reset();
         document.getElementById('activity-id').value = '';
+        this.currentDescription = '';
+        this.currentNotes = '';
         this.currentResources = [];
-        this.renderResources();
+        this.renderDetailsResources();
 
         // Pre-populate fields from parsed data
         if (parsed.title) {
@@ -108,6 +121,9 @@ const ActivityFormComponent = {
         if (parsed.time) {
             document.getElementById('activity-time').value = parsed.time;
         }
+
+        // Update due date visibility based on cadence
+        this.updateDueDateVisibility();
 
         // Clear modal command bar
         if (this.modalCommandBarInput) {
@@ -165,14 +181,16 @@ const ActivityFormComponent = {
 
         const activityId = document.getElementById('activity-id').value;
         const title = document.getElementById('activity-title').value;
-        const description = document.getElementById('activity-description').value;
         const categoryId = document.getElementById('activity-category').value;
         const status = document.getElementById('activity-status').value;
         const dueDateValue = document.getElementById('activity-due-date').value;
-        const notes = document.getElementById('activity-notes').value;
         const cadence = document.getElementById('activity-cadence').value;
         const studio = document.getElementById('activity-studio').value;
         const time = document.getElementById('activity-time').value;
+
+        // Read description and notes from hidden fields (updated by details modal)
+        const description = document.getElementById('activity-description').value;
+        const notes = document.getElementById('activity-notes').value;
 
         const dueDate = dateInputToTimestamp(dueDateValue);
 
@@ -206,11 +224,11 @@ const ActivityFormComponent = {
     },
 
     /**
-     * Add resource to current resources
+     * Add resource to current resources (in details modal)
      */
-    addResource() {
-        const titleInput = document.getElementById('resource-title');
-        const urlInput = document.getElementById('resource-url');
+    addDetailsResource() {
+        const titleInput = document.getElementById('details-resource-title');
+        const urlInput = document.getElementById('details-resource-url');
 
         if (!titleInput || !urlInput) return;
 
@@ -228,7 +246,7 @@ const ActivityFormComponent = {
         }
 
         this.currentResources.push({ title, url });
-        this.renderResources();
+        this.renderDetailsResources();
 
         // Clear inputs
         titleInput.value = '';
@@ -238,16 +256,16 @@ const ActivityFormComponent = {
     /**
      * Remove resource from current resources
      */
-    removeResource(index) {
+    removeDetailsResource(index) {
         this.currentResources.splice(index, 1);
-        this.renderResources();
+        this.renderDetailsResources();
     },
 
     /**
-     * Render resources list in form
+     * Render resources list in details modal
      */
-    renderResources() {
-        const resourcesList = document.getElementById('resources-list');
+    renderDetailsResources() {
+        const resourcesList = document.getElementById('details-resources-list');
         if (!resourcesList) return;
 
         if (this.currentResources.length === 0) {
@@ -260,7 +278,7 @@ const ActivityFormComponent = {
                 <a href="${escapeHTML(resource.url)}" target="_blank" rel="noopener noreferrer" class="resource-link">
                     🔗 ${escapeHTML(resource.title)}
                 </a>
-                <button type="button" class="resource-remove" onclick="ActivityFormComponent.removeResource(${index})">
+                <button type="button" class="resource-remove" onclick="ActivityFormComponent.removeDetailsResource(${index})">
                     Remove
                 </button>
             </div>
@@ -380,12 +398,75 @@ const ActivityFormComponent = {
             document.getElementById('activity-cadence').value = parsed.cadence;
         }
 
+        // Update due date visibility
+        this.updateDueDateVisibility();
+
         // Clear the command bar input
         this.modalCommandBarInput.value = '';
         this.hideModalSuggestions();
 
         // Focus on title field for further editing
         document.getElementById('activity-title').focus();
+    },
+
+    /**
+     * Update due date field visibility based on cadence selection
+     */
+    updateDueDateVisibility() {
+        const cadence = document.getElementById('activity-cadence').value;
+        const dueDateGroup = document.getElementById('due-date-group');
+
+        if (!dueDateGroup) return;
+
+        // Hide due date for recurring cadences (daily, weekly, monthly)
+        if (cadence === 'daily' || cadence === 'weekly' || cadence === 'monthly') {
+            dueDateGroup.style.display = 'none';
+            // Clear the due date value when hidden
+            document.getElementById('activity-due-date').value = '';
+        } else {
+            dueDateGroup.style.display = '';
+        }
+    },
+
+    /**
+     * Show activity details modal
+     */
+    showDetailsModal() {
+        // Populate details modal with current values
+        document.getElementById('details-description').value = this.currentDescription;
+        document.getElementById('details-notes').value = this.currentNotes;
+        this.renderDetailsResources();
+
+        // Show the modal
+        const detailsModal = document.getElementById('activity-details-modal');
+        if (detailsModal) {
+            detailsModal.classList.add('active');
+        }
+    },
+
+    /**
+     * Hide activity details modal
+     */
+    hideDetailsModal() {
+        const detailsModal = document.getElementById('activity-details-modal');
+        if (detailsModal) {
+            detailsModal.classList.remove('active');
+        }
+    },
+
+    /**
+     * Save details from details modal
+     */
+    saveDetails() {
+        // Save values from details modal to memory and hidden fields
+        this.currentDescription = document.getElementById('details-description').value;
+        this.currentNotes = document.getElementById('details-notes').value;
+
+        document.getElementById('activity-description').value = this.currentDescription;
+        document.getElementById('activity-notes').value = this.currentNotes;
+
+        this.hideDetailsModal();
+        UIController.showToast('Details saved', 'success');
     },
 
     /**
@@ -534,26 +615,68 @@ const ActivityFormComponent = {
             });
         }
 
-        // Add resource button
-        const addResourceBtn = document.getElementById('add-resource-btn');
-        if (addResourceBtn) {
-            addResourceBtn.addEventListener('click', () => {
-                this.addResource();
+        // More Details button
+        const moreDetailsBtn = document.getElementById('more-details-btn');
+        if (moreDetailsBtn) {
+            moreDetailsBtn.addEventListener('click', () => {
+                this.showDetailsModal();
             });
         }
 
-        // Enter key on resource inputs
-        const resourceTitle = document.getElementById('resource-title');
-        const resourceUrl = document.getElementById('resource-url');
+        // Details modal close button
+        const detailsCloseBtn = document.getElementById('activity-details-modal-close');
+        if (detailsCloseBtn) {
+            detailsCloseBtn.addEventListener('click', () => {
+                this.hideDetailsModal();
+            });
+        }
 
-        if (resourceTitle && resourceUrl) {
-            [resourceTitle, resourceUrl].forEach(input => {
+        // Details modal save button
+        const detailsSaveBtn = document.getElementById('activity-details-save-btn');
+        if (detailsSaveBtn) {
+            detailsSaveBtn.addEventListener('click', () => {
+                this.saveDetails();
+            });
+        }
+
+        // Click outside to close details modal
+        const detailsModal = document.getElementById('activity-details-modal');
+        if (detailsModal) {
+            detailsModal.addEventListener('click', (e) => {
+                if (e.target === detailsModal) {
+                    this.hideDetailsModal();
+                }
+            });
+        }
+
+        // Add resource button in details modal
+        const addDetailsResourceBtn = document.getElementById('details-add-resource-btn');
+        if (addDetailsResourceBtn) {
+            addDetailsResourceBtn.addEventListener('click', () => {
+                this.addDetailsResource();
+            });
+        }
+
+        // Enter key on resource inputs in details modal
+        const detailsResourceTitle = document.getElementById('details-resource-title');
+        const detailsResourceUrl = document.getElementById('details-resource-url');
+
+        if (detailsResourceTitle && detailsResourceUrl) {
+            [detailsResourceTitle, detailsResourceUrl].forEach(input => {
                 input.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') {
                         e.preventDefault();
-                        this.addResource();
+                        this.addDetailsResource();
                     }
                 });
+            });
+        }
+
+        // Cadence change - update due date visibility
+        const cadenceSelect = document.getElementById('activity-cadence');
+        if (cadenceSelect) {
+            cadenceSelect.addEventListener('change', () => {
+                this.updateDueDateVisibility();
             });
         }
 
