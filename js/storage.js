@@ -3,7 +3,8 @@
 const STORAGE_KEYS = {
     CATEGORIES: 'enablement_categories',
     ACTIVITIES: 'enablement_activities',
-    SETTINGS: 'enablement_settings'
+    SETTINGS: 'enablement_settings',
+    SCHEDULES: 'enablement_schedules'
 };
 
 const Storage = {
@@ -58,6 +59,21 @@ const Storage = {
      */
     saveSettings(settings) {
         localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+    },
+
+    /**
+     * Get all schedule templates from localStorage
+     */
+    getSchedules() {
+        const data = localStorage.getItem(STORAGE_KEYS.SCHEDULES);
+        return data ? JSON.parse(data) : [];
+    },
+
+    /**
+     * Save schedule templates to localStorage
+     */
+    saveSchedules(schedules) {
+        localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(schedules));
     },
 
     /**

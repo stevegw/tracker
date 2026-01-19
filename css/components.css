@@ -1235,3 +1235,117 @@
         font-size: 14px;
     }
 }
+
+/* Schedule Import Component */
+.schedule-preview-content {
+    max-height: 500px;
+    overflow-y: auto;
+    padding: var(--spacing-sm);
+}
+
+.schedule-day-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.schedule-day-header {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 2px solid var(--border);
+    text-transform: capitalize;
+}
+
+.schedule-classes-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.schedule-class-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface);
+}
+
+.schedule-class-item:hover {
+    border-color: var(--primary-color);
+    background: var(--background);
+}
+
+.schedule-class-item.selected {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: white;
+}
+
+.schedule-class-item input[type="checkbox"] {
+    margin-top: 2px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.schedule-class-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.schedule-class-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.schedule-class-item.selected .schedule-class-name {
+    color: white;
+}
+
+.schedule-class-meta {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.schedule-class-item.selected .schedule-class-meta {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.schedule-class-time,
+.schedule-class-location {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Mobile adjustments for Schedule Import */
+@media (max-width: 768px) {
+    .schedule-preview-content {
+        max-height: 400px;
+    }
+
+    .schedule-day-header {
+        font-size: 14px;
+    }
+
+    .schedule-class-name {
+        font-size: 13px;
+    }
+
+    .schedule-class-meta {
+        font-size: 11px;
+        flex-direction: column;
+        gap: 4px;
+    }
+}

@@ -208,3 +208,138 @@ function isValidURL(string) {
         return false;
     }
 }
+
+/**
+ * Parse schedule text into structured data
+ * Parses format like:
+ * MONDAY
+ * 05:05 AMBasic Training  Gym
+ * 06:00 AMMasters Swim  Indoor Pool
+ */
+function parseScheduleText(text) {
+    if (!text || typeof text !== 'string') {
+        return { success: false, error: 'No text provided', data: null };
+    }
+
+    const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    const daysOfWeek = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+    const schedule = {};
+    let currentDay = null;
+
+    for (const line of lines) {
+        // Check if this line is a day header
+        const upperLine = line.toUpperCase();
+        if (daysOfWeek.includes(upperLine)) {
+            currentDay = upperLine;
+            schedule[currentDay] = [];
+            continue;
+        }
+
+        // If we don't have a current day yet, skip this line
+        if (!currentDay) continue;
+
+        // Try to parse a class entry
+        // Format: TIME + CLASS NAME + LOCATION (separated by two or more spaces)
+        // Example: "05:05 AMBasic Training  Gym"
+        const timeMatch = line.match(/^(\d{1,2}:\d{2}\s*[AP]M)/i);
+        if (!timeMatch) continue;
+
+        const time = timeMatch[1].trim();
+        const remainingText = line.substring(timeMatch[0].length).trim();
+
+        // Split by two or more spaces to separate class name from location
+        const parts = remainingText.split(/\s{2,}/);
+        if (parts.length < 2) {
+            // If no clear separation, treat last word as location
+            const lastSpaceIndex = remainingText.lastIndexOf(' ');
+            if (lastSpaceIndex > 0) {
+                const className = remainingText.substring(0, lastSpaceIndex).trim();
+                const location = remainingText.substring(lastSpaceIndex + 1).trim();
+                schedule[currentDay].push({ time, className, location });
+            } else {
+                // No location found, just use class name
+                schedule[currentDay].push({ time, className: remainingText, location: '' });
+            }
+        } else {
+            const className = parts[0].trim();
+            const location = parts.slice(1).join(' ').trim();
+            schedule[currentDay].push({ time, className, location });
+        }
+    }
+
+    // Check if we parsed anything
+    const totalClasses = Object.values(schedule).reduce((sum, classes) => sum + classes.length, 0);
+    if (totalClasses === 0) {
+        return {
+            success: false,
+            error: 'No classes found in the text. Make sure the format includes day headers (MONDAY, etc.) and class entries with times.',
+            data: null
+        };
+    }
+
+    return {
+        success: true,
+        error: null,
+        data: schedule
+    };
+}
+
+/**
+ * Get the next occurrence of a specific day of the week
+ * @param {string} dayName - Day name like 'MONDAY', 'TUESDAY', etc.
+ * @param {string} timeString - Time string like '05:05 AM'
+ * @returns {number|null} Timestamp of the next occurrence, or null if invalid
+ */
+function getNextOccurrenceOfDay(dayName, timeString) {
+    const daysMap = {
+        'SUNDAY': 0,
+        'MONDAY': 1,
+        'TUESDAY': 2,
+        'WEDNESDAY': 3,
+        'THURSDAY': 4,
+        'FRIDAY': 5,
+        'SATURDAY': 6
+    };
+
+    const targetDay = daysMap[dayName.toUpperCase()];
+    if (targetDay === undefined) return null;
+
+    // Parse time
+    const timeMatch = timeString.match(/(\d{1,2}):(\d{2})\s*([AP]M)/i);
+    if (!timeMatch) return null;
+
+    let hours = parseInt(timeMatch[1], 10);
+    const minutes = parseInt(timeMatch[2], 10);
+    const meridiem = timeMatch[3].toUpperCase();
+
+    // Convert to 24-hour format
+    if (meridiem === 'PM' && hours !== 12) {
+        hours += 12;
+    } else if (meridiem === 'AM' && hours === 12) {
+        hours = 0;
+    }
+
+    // Get current date
+    const now = new Date();
+    const currentDay = now.getDay();
+
+    // Calculate days until target day
+    let daysUntil = targetDay - currentDay;
+    if (daysUntil < 0) {
+        daysUntil += 7; // Next week
+    } else if (daysUntil === 0) {
+        // Same day - check if time has passed
+        const targetTime = new Date(now);
+        targetTime.setHours(hours, minutes, 0, 0);
+        if (targetTime <= now) {
+            daysUntil = 7; // Next week
+        }
+    }
+
+    // Create target date
+    const targetDate = new Date(now);
+    targetDate.setDate(targetDate.getDate() + daysUntil);
+    targetDate.setHours(hours, minutes, 0, 0);
+
+    return targetDate.getTime();
+}

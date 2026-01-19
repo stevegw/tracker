@@ -7,9 +7,9 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>My Tracker</title>
-    <link rel="stylesheet" href="css/main.css?v=1.0.61">
-    <link rel="stylesheet" href="css/components.css?v=1.0.61">
-    <link rel="stylesheet" href="css/utilities.css?v=1.0.61">
+    <link rel="stylesheet" href="css/main.css?v=1.0.62">
+    <link rel="stylesheet" href="css/components.css?v=1.0.62">
+    <link rel="stylesheet" href="css/utilities.css?v=1.0.62">
 </head>
 <body>
     <!-- Header -->
@@ -95,6 +95,7 @@
             <div style="margin-bottom: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
                 <button class="btn btn-secondary" id="filters-btn">🔍 Filters & Sort</button>
                 <button class="btn btn-secondary" id="genesis-classes-btn">🏋️ Genesis Classes</button>
+                <button class="btn btn-secondary" id="schedule-import-trigger-btn">📅 Import Schedule</button>
                 <button class="btn btn-secondary" id="toggle-selection-btn" onclick="ActivityListComponent.toggleSelectionMode()">☑ Select</button>
             </div>
 
@@ -509,6 +510,75 @@
         </div>
     </div>
 
+    <!-- Schedule Import Modal -->
+    <div class="modal" id="schedule-import-modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>📅 Import Class Schedule</h2>
+                <button class="modal-close" id="schedule-import-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Input Area -->
+                <div id="schedule-input-area">
+                    <div class="form-group">
+                        <label>Load Saved Schedule (Optional)</label>
+                        <select id="schedule-load-template" class="form-select">
+                            <option value="">-- Load a saved schedule --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="schedule-text-input">Paste Class Schedule</label>
+                        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">
+                            Copy and paste your class schedule. Format should include day headers (MONDAY, TUESDAY, etc.)
+                            followed by classes with times (e.g., "05:05 AM Basic Training  Gym").
+                        </p>
+                        <textarea id="schedule-text-input"
+                                  class="form-textarea"
+                                  rows="12"
+                                  placeholder="Example:&#10;MONDAY&#10;05:05 AMBasic Training  Gym&#10;06:00 AMMasters Swim  Indoor Pool&#10;&#10;TUESDAY&#10;06:15 AMBodyPump™  Studio A&#10;..."></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; margin-top: 16px;">
+                        <button class="btn btn-primary" id="schedule-parse-btn">
+                            Parse Schedule
+                        </button>
+                        <button class="btn btn-secondary" id="schedule-save-template-btn">
+                            Save as Template
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Preview Area -->
+                <div id="schedule-preview-area" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <button class="btn btn-small btn-secondary" id="schedule-select-all-btn">
+                                Select All
+                            </button>
+                            <button class="btn btn-small btn-secondary" id="schedule-deselect-all-btn">
+                                Deselect All
+                            </button>
+                        </div>
+                        <button class="btn btn-small" onclick="ScheduleImportComponent.resetView()">
+                            ← Back to Input
+                        </button>
+                    </div>
+
+                    <div id="schedule-preview-content" class="schedule-preview-content">
+                        <!-- Parsed schedule will be rendered here -->
+                    </div>
+
+                    <div style="margin-top: 24px; text-align: right;">
+                        <button class="btn btn-primary btn-large" id="schedule-import-btn">
+                            Import Selected Classes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
 
@@ -523,22 +593,23 @@
 
     <!-- version.js must NOT have cache-busting param - it needs to run fresh every time to check for updates -->
     <script src="js/version.js"></script>
-    <script src="js/utils.js?v=1.0.61"></script>
-    <script src="js/storage.js?v=1.0.61"></script>
-    <script src="js/supabase-client.js?v=1.0.61"></script>
-    <script src="js/models.js?v=1.0.61"></script>
-    <script src="js/supabase-sync.js?v=1.0.61"></script>
-    <script src="js/components/auth.js?v=1.0.61"></script>
-    <script src="js/components/command-bar.js?v=1.0.61"></script>
-    <script src="js/components/celebrations.js?v=1.0.61"></script>
-    <script src="js/components/header.js?v=1.0.61"></script>
-    <script src="js/components/sidebar.js?v=1.0.61"></script>
-    <script src="js/components/activity-list.js?v=1.0.61"></script>
-    <script src="js/components/activity-form.js?v=1.0.61"></script>
-    <script src="js/components/stats-dashboard.js?v=1.0.61"></script>
-    <script src="js/genesis-classes-data.js?v=1.0.61"></script>
-    <script src="js/components/genesis-class-browser.js?v=1.0.61"></script>
-    <script src="js/ui.js?v=1.0.61"></script>
-    <script src="js/app.js?v=1.0.61"></script>
+    <script src="js/utils.js?v=1.0.62"></script>
+    <script src="js/storage.js?v=1.0.62"></script>
+    <script src="js/supabase-client.js?v=1.0.62"></script>
+    <script src="js/models.js?v=1.0.62"></script>
+    <script src="js/supabase-sync.js?v=1.0.62"></script>
+    <script src="js/components/auth.js?v=1.0.62"></script>
+    <script src="js/components/command-bar.js?v=1.0.62"></script>
+    <script src="js/components/celebrations.js?v=1.0.62"></script>
+    <script src="js/components/header.js?v=1.0.62"></script>
+    <script src="js/components/sidebar.js?v=1.0.62"></script>
+    <script src="js/components/activity-list.js?v=1.0.62"></script>
+    <script src="js/components/activity-form.js?v=1.0.62"></script>
+    <script src="js/components/stats-dashboard.js?v=1.0.62"></script>
+    <script src="js/genesis-classes-data.js?v=1.0.62"></script>
+    <script src="js/components/genesis-class-browser.js?v=1.0.62"></script>
+    <script src="js/components/schedule-import.js?v=1.0.62"></script>
+    <script src="js/ui.js?v=1.0.62"></script>
+    <script src="js/app.js?v=1.0.62"></script>
 </body>
 </html>
