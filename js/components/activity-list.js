@@ -164,6 +164,19 @@ const ActivityListComponent = {
             `);
         }
 
+        // Reminder badge - LEFT
+        if (activity.reminderEnabled) {
+            let reminderText = '🔔 Reminder';
+            if (activity.reminderTime) {
+                reminderText = `🔔 ${escapeHTML(activity.reminderTime)}`;
+            }
+            leftBadges.push(`
+                <span class="activity-badge badge-reminder" title="Custom reminder enabled">
+                    ${reminderText}
+                </span>
+            `);
+        }
+
         // Status badge - LEFT (clickable with dropdown)
         const statusLabels = {
             'not-started': 'Not Started',

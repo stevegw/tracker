@@ -39,6 +39,14 @@ const ActivityFormComponent = {
             document.getElementById('activity-studio').value = activity.studio || '';
             document.getElementById('activity-time').value = activity.time || '';
 
+            // Set reminder values
+            document.getElementById('activity-reminder-enabled').checked = activity.reminderEnabled || false;
+            document.getElementById('activity-reminder-time').value = activity.reminderTime || '';
+            document.getElementById('activity-reminder-before').value = activity.reminderMinutesBefore || '';
+
+            // Show/hide reminder options based on checkbox
+            this.updateReminderOptionsVisibility();
+
             // Store details in memory and hidden fields
             this.currentDescription = activity.description || '';
             this.currentNotes = activity.notes || '';
@@ -57,6 +65,9 @@ const ActivityFormComponent = {
             this.currentNotes = '';
             this.currentResources = [];
             this.renderDetailsResources();
+
+            // Hide reminder options by default
+            this.updateReminderOptionsVisibility();
         }
 
         // Update due date field visibility based on cadence
@@ -192,6 +203,11 @@ const ActivityFormComponent = {
         const description = document.getElementById('activity-description').value;
         const notes = document.getElementById('activity-notes').value;
 
+        // Read reminder values
+        const reminderEnabled = document.getElementById('activity-reminder-enabled').checked;
+        const reminderTime = document.getElementById('activity-reminder-time').value;
+        const reminderBefore = document.getElementById('activity-reminder-before').value;
+
         const dueDate = dateInputToTimestamp(dueDateValue);
 
         const data = {
@@ -204,7 +220,10 @@ const ActivityFormComponent = {
             cadence,
             resources: this.currentResources,
             studio,
-            time
+            time,
+            reminderEnabled,
+            reminderTime: reminderTime || null,
+            reminderMinutesBefore: reminderBefore ? parseInt(reminderBefore) : null
         };
 
         const activityModel = new ActivityModel();
@@ -425,6 +444,22 @@ const ActivityFormComponent = {
             document.getElementById('activity-due-date').value = '';
         } else {
             dueDateGroup.style.display = '';
+        }
+    },
+
+    /**
+     * Update reminder options visibility based on checkbox
+     */
+    updateReminderOptionsVisibility() {
+        const reminderEnabled = document.getElementById('activity-reminder-enabled');
+        const reminderOptions = document.getElementById('reminder-options');
+
+        if (!reminderEnabled || !reminderOptions) return;
+
+        if (reminderEnabled.checked) {
+            reminderOptions.style.display = '';
+        } else {
+            reminderOptions.style.display = 'none';
         }
     },
 
@@ -677,6 +712,14 @@ const ActivityFormComponent = {
         if (cadenceSelect) {
             cadenceSelect.addEventListener('change', () => {
                 this.updateDueDateVisibility();
+            });
+        }
+
+        // Reminder checkbox - update reminder options visibility
+        const reminderCheckbox = document.getElementById('activity-reminder-enabled');
+        if (reminderCheckbox) {
+            reminderCheckbox.addEventListener('change', () => {
+                this.updateReminderOptionsVisibility();
             });
         }
 
