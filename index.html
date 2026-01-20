@@ -7,9 +7,9 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>My Tracker</title>
-    <link rel="stylesheet" href="css/main.css?v=1.0.63">
-    <link rel="stylesheet" href="css/components.css?v=1.0.63">
-    <link rel="stylesheet" href="css/utilities.css?v=1.0.63">
+    <link rel="stylesheet" href="css/main.css?v=1.0.64">
+    <link rel="stylesheet" href="css/components.css?v=1.0.64">
+    <link rel="stylesheet" href="css/utilities.css?v=1.0.64">
 </head>
 <body>
     <!-- Header -->
@@ -206,6 +206,34 @@
                     <div class="form-group">
                         <label for="activity-time">Time</label>
                         <input type="time" id="activity-time" class="form-input">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="activity-reminder-enabled">
+                        🔔 Enable reminder notification
+                    </label>
+                </div>
+
+                <div class="form-row" id="reminder-options" style="display: none;">
+                    <div class="form-group">
+                        <label for="activity-reminder-time">Reminder Time</label>
+                        <input type="time" id="activity-reminder-time" class="form-input">
+                        <small style="color: var(--text-secondary); display: block; margin-top: 4px;">Daily reminder at this time</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="activity-reminder-before">Before Due Date</label>
+                        <select id="activity-reminder-before" class="form-select">
+                            <option value="">None</option>
+                            <option value="15">15 minutes before</option>
+                            <option value="30">30 minutes before</option>
+                            <option value="60">1 hour before</option>
+                            <option value="120">2 hours before</option>
+                            <option value="1440">1 day before</option>
+                        </select>
+                        <small style="color: var(--text-secondary); display: block; margin-top: 4px;">Only if due date is set</small>
                     </div>
                 </div>
 
@@ -590,22 +618,22 @@
 
     <!-- version.js must NOT have cache-busting param - it needs to run fresh every time to check for updates -->
     <script src="js/version.js"></script>
-    <script src="js/utils.js?v=1.0.63"></script>
-    <script src="js/storage.js?v=1.0.63"></script>
-    <script src="js/supabase-client.js?v=1.0.63"></script>
-    <script src="js/models.js?v=1.0.63"></script>
-    <script src="js/supabase-sync.js?v=1.0.63"></script>
-    <script src="js/components/auth.js?v=1.0.63"></script>
-    <script src="js/components/command-bar.js?v=1.0.63"></script>
-    <script src="js/components/celebrations.js?v=1.0.63"></script>
-    <script src="js/components/header.js?v=1.0.63"></script>
-    <script src="js/components/sidebar.js?v=1.0.63"></script>
-    <script src="js/components/activity-list.js?v=1.0.63"></script>
-    <script src="js/components/activity-form.js?v=1.0.63"></script>
-    <script src="js/components/stats-dashboard.js?v=1.0.63"></script>
-    <script src="js/components/schedule-import.js?v=1.0.63"></script>
-    <script src="js/components/schedule-lookup.js?v=1.0.63"></script>
-    <script src="js/ui.js?v=1.0.63"></script>
-    <script src="js/app.js?v=1.0.63"></script>
+    <script src="js/utils.js?v=1.0.64"></script>
+    <script src="js/storage.js?v=1.0.64"></script>
+    <script src="js/supabase-client.js?v=1.0.64"></script>
+    <script src="js/models.js?v=1.0.64"></script>
+    <script src="js/supabase-sync.js?v=1.0.64"></script>
+    <script src="js/components/auth.js?v=1.0.64"></script>
+    <script src="js/components/command-bar.js?v=1.0.64"></script>
+    <script src="js/components/celebrations.js?v=1.0.64"></script>
+    <script src="js/components/header.js?v=1.0.64"></script>
+    <script src="js/components/sidebar.js?v=1.0.64"></script>
+    <script src="js/components/activity-list.js?v=1.0.64"></script>
+    <script src="js/components/activity-form.js?v=1.0.64"></script>
+    <script src="js/components/stats-dashboard.js?v=1.0.64"></script>
+    <script src="js/components/schedule-import.js?v=1.0.64"></script>
+    <script src="js/components/schedule-lookup.js?v=1.0.64"></script>
+    <script src="js/ui.js?v=1.0.64"></script>
+    <script src="js/app.js?v=1.0.64"></script>
 </body>
 </html>

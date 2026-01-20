@@ -1248,6 +1248,18 @@
     font-weight: 600;
 }
 
+.badge-reminder {
+    background: #f59e0b20;
+    color: #f59e0b;
+    border: 1px solid #f59e0b40;
+}
+
+body.dark-mode .badge-reminder {
+    background: #f59e0b30;
+    color: #fbbf24;
+    border: 1px solid #f59e0b50;
+}
+
 /* Mobile adjustments for Schedule Lookup */
 @media (max-width: 768px) {
     .lookup-schedule-card {

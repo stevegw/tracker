@@ -14,7 +14,7 @@ const SupabaseSync = {
             let value = obj[key];
 
             // Convert timestamp numbers to ISO strings for PostgreSQL
-            if (typeof value === 'number' && (key.endsWith('At') || key === 'dueDate')) {
+            if (typeof value === 'number' && (key.endsWith('At') || key === 'dueDate' || key === 'lastReminderSent')) {
                 value = new Date(value).toISOString();
             }
 
@@ -43,6 +43,14 @@ const SupabaseSync = {
 
             // Convert due_date ISO string to timestamp
             if (key === 'due_date' && typeof value === 'string' && value) {
+                const timestamp = new Date(value).getTime();
+                if (!isNaN(timestamp)) {
+                    value = timestamp;
+                }
+            }
+
+            // Convert last_reminder_sent ISO string to timestamp
+            if (key === 'last_reminder_sent' && typeof value === 'string' && value) {
                 const timestamp = new Date(value).getTime();
                 if (!isNaN(timestamp)) {
                     value = timestamp;

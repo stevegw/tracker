@@ -183,6 +183,10 @@ class ActivityModel {
             studio: data.studio || '',
             time: data.time || '',
             type: data.type || 'regular', // 'regular' or 'lookup'
+            reminderEnabled: data.reminderEnabled || false,
+            reminderTime: data.reminderTime || null, // HH:MM format
+            reminderMinutesBefore: data.reminderMinutesBefore || null, // Minutes before due date
+            lastReminderSent: null,
             createdAt: Date.now(),
             updatedAt: Date.now()
         };

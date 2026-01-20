@@ -29,6 +29,12 @@ const UIController = {
         // Check for due date notifications
         this.checkDueDateNotifications();
 
+        // Check for custom reminders
+        this.checkCustomReminders();
+
+        // Set up periodic reminder checks (every minute)
+        this.startReminderCheckInterval();
+
         // Initial render
         this.applyFilters();
     },
@@ -326,5 +332,141 @@ const UIController = {
                 icon: '/favicon.ico'
             });
         }
+    },
+
+    /**
+     * Check for custom activity reminders
+     */
+    checkCustomReminders() {
+        const settings = Storage.getSettings();
+        if (!settings.notificationsEnabled) return;
+
+        if (!('Notification' in window) || Notification.permission !== 'granted') {
+            return;
+        }
+
+        const activityModel = new ActivityModel();
+        const activities = activityModel.getAll();
+        const now = Date.now();
+        const currentTime = new Date();
+        const currentHour = currentTime.getHours();
+        const currentMinute = currentTime.getMinutes();
+        const currentTimeString = `${String(currentHour).padStart(2, '0')}:${String(currentMinute).padStart(2, '0')}`;
+
+        activities.forEach(activity => {
+            // Skip completed activities
+            if (activity.status === 'completed') return;
+
+            // Skip if reminders not enabled
+            if (!activity.reminderEnabled) return;
+
+            // Check for daily reminder at specific time
+            if (activity.reminderTime) {
+                const shouldSendDailyReminder = this.shouldSendDailyReminder(activity, currentTimeString);
+                if (shouldSendDailyReminder) {
+                    this.sendActivityReminder(activity, 'daily');
+                }
+            }
+
+            // Check for reminder before due date
+            if (activity.reminderMinutesBefore && activity.dueDate) {
+                const shouldSendBeforeReminder = this.shouldSendBeforeReminder(activity, now);
+                if (shouldSendBeforeReminder) {
+                    this.sendActivityReminder(activity, 'before-due');
+                }
+            }
+        });
+    },
+
+    /**
+     * Check if we should send a daily reminder
+     */
+    shouldSendDailyReminder(activity, currentTimeString) {
+        // Check if current time matches reminder time
+        if (activity.reminderTime !== currentTimeString) return false;
+
+        // Check if we already sent a reminder recently (within last 23 hours)
+        if (activity.lastReminderSent) {
+            const hoursSinceLastReminder = (Date.now() - activity.lastReminderSent) / (1000 * 60 * 60);
+            if (hoursSinceLastReminder < 23) return false;
+        }
+
+        return true;
+    },
+
+    /**
+     * Check if we should send a before-due-date reminder
+     */
+    shouldSendBeforeReminder(activity, now) {
+        const minutesBeforeDue = activity.reminderMinutesBefore;
+        const dueDate = activity.dueDate;
+
+        // Calculate when reminder should be sent
+        const reminderTime = dueDate - (minutesBeforeDue * 60 * 1000);
+
+        // Check if current time is within 1 minute of reminder time
+        const timeDiff = Math.abs(now - reminderTime);
+        if (timeDiff > 60 * 1000) return false; // Not within 1 minute
+
+        // Check if we already sent this reminder
+        if (activity.lastReminderSent) {
+            const minutesSinceLastReminder = (now - activity.lastReminderSent) / (1000 * 60);
+            if (minutesSinceLastReminder < minutesBeforeDue) return false;
+        }
+
+        return true;
+    },
+
+    /**
+     * Send a reminder notification for an activity
+     */
+    sendActivityReminder(activity, type) {
+        const activityModel = new ActivityModel();
+
+        let title = '';
+        let body = '';
+
+        if (type === 'daily') {
+            title = '🔔 Activity Reminder';
+            body = activity.title;
+        } else if (type === 'before-due') {
+            const minutes = activity.reminderMinutesBefore;
+            let timeText = '';
+            if (minutes < 60) {
+                timeText = `${minutes} minutes`;
+            } else if (minutes === 60) {
+                timeText = '1 hour';
+            } else if (minutes === 120) {
+                timeText = '2 hours';
+            } else if (minutes === 1440) {
+                timeText = '1 day';
+            } else {
+                timeText = `${Math.floor(minutes / 60)} hours`;
+            }
+            title = '⏰ Activity Due Soon';
+            body = `${activity.title} is due in ${timeText}`;
+        }
+
+        // Send notification
+        new Notification(title, {
+            body: body,
+            icon: '/favicon.ico',
+            tag: activity.id // Prevent duplicate notifications for same activity
+        });
+
+        // Update lastReminderSent timestamp
+        activityModel.update(activity.id, {
+            lastReminderSent: Date.now()
+        });
+    },
+
+    /**
+     * Start periodic reminder checks (every minute)
+     */
+    startReminderCheckInterval() {
+        // Check every minute
+        setInterval(() => {
+            this.checkCustomReminders();
+        }, 60 * 1000); // 60 seconds
     }
 };
