@@ -299,14 +299,14 @@ const ScheduleImportComponent = {
     /**
      * Import selected classes as lookup schedule templates
      */
-    importSelectedClasses() {
+    async importSelectedClasses() {
         if (this.selectedClasses.size === 0) {
             UIController.showToast('Please select at least one class to import', 'error');
             return;
         }
 
         const categoryModel = new CategoryModel();
-        const activityModel = new ActivityModel();
+        const lookupModel = new LookupScheduleModel();
 
         // Find or create "Classes" category
         let classesCategory = categoryModel.getAll().find(cat => cat.name === 'Classes');
@@ -317,28 +317,26 @@ const ScheduleImportComponent = {
         let importedCount = 0;
 
         // Create lookup schedule templates for selected classes
-        this.selectedClasses.forEach(key => {
+        for (const key of this.selectedClasses) {
             const [day, indexStr] = key.split('-');
             const index = parseInt(indexStr, 10);
             const classItem = this.scheduleData[day][index];
 
-            if (!classItem) return;
+            if (!classItem) continue;
 
             // Create lookup schedule template (not a regular activity)
-            activityModel.create({
+            await lookupModel.create({
                 title: classItem.className,
                 description: `${day} at ${classItem.time}`,
                 categoryId: classesCategory.id,
                 cadence: 'weekly',
-                dueDate: null, // No due date for lookup templates
                 studio: classItem.location,
                 time: classItem.time,
-                type: 'lookup', // Mark as lookup schedule
                 notes: `Lookup schedule - imported on ${formatDate(Date.now())}`
             });
 
             importedCount++;
-        });
+        }
 
         // Refresh UI
         UIController.refresh();
