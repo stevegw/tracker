@@ -18,6 +18,7 @@ const AdminAuth = {
         if (!this.currentUser) {
             console.log('AdminAuth: No user logged in');
             this.showUnauthenticatedUI();
+            this.setupEventListeners();
             return;
         }
 
@@ -27,6 +28,7 @@ const AdminAuth = {
         if (!this.isAdmin) {
             console.log('AdminAuth: User is not an admin');
             this.showAccessDenied();
+            this.setupEventListeners();
             return;
         }
 
