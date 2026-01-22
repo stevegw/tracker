@@ -7,8 +7,11 @@ const AuthComponent = {
      * Initialize authentication
      */
     async init() {
+        console.log('=== AuthComponent.init() CALLED ===');
+
         // Check if user is already signed in
         this.currentUser = await getCurrentUser();
+        console.log('Current user:', this.currentUser);
 
         if (this.currentUser) {
             this.showAuthenticatedUI();
@@ -80,20 +83,32 @@ const AuthComponent = {
      * Setup auth modal event listeners
      */
     setupAuthModal() {
+        console.log('=== AuthComponent.setupAuthModal() CALLED ===');
+
         // Sign in/sign up button
         const authBtn = document.getElementById('auth-btn');
+        console.log('auth-btn element:', authBtn);
         if (authBtn) {
+            console.log('Adding click listener to auth-btn');
             authBtn.addEventListener('click', () => {
+                console.log('AUTH-BTN CLICKED!');
                 this.showAuthModal();
             });
+        } else {
+            console.error('auth-btn element NOT FOUND!');
         }
 
         // Auth prompt button
         const authPromptBtn = document.getElementById('auth-prompt-btn');
+        console.log('auth-prompt-btn element:', authPromptBtn);
         if (authPromptBtn) {
+            console.log('Adding click listener to auth-prompt-btn');
             authPromptBtn.addEventListener('click', () => {
+                console.log('AUTH-PROMPT-BTN CLICKED!');
                 this.showAuthModal();
             });
+        } else {
+            console.error('auth-prompt-btn element NOT FOUND!');
         }
 
         // Sign out button
@@ -144,18 +159,29 @@ const AuthComponent = {
         const signInForm = document.getElementById('signin-form');
         const signUpForm = document.getElementById('signup-form');
 
+        console.log('signin-form element:', signInForm);
+        console.log('signup-form element:', signUpForm);
+
         if (signInForm) {
+            console.log('Adding submit listener to signin-form');
             signInForm.addEventListener('submit', async (e) => {
+                console.log('SIGNIN-FORM SUBMIT EVENT FIRED!');
                 e.preventDefault();
                 await this.handleSignIn(e);
             });
+        } else {
+            console.error('signin-form element NOT FOUND!');
         }
 
         if (signUpForm) {
+            console.log('Adding submit listener to signup-form');
             signUpForm.addEventListener('submit', async (e) => {
+                console.log('SIGNUP-FORM SUBMIT EVENT FIRED!');
                 e.preventDefault();
                 await this.handleSignUp(e);
             });
+        } else {
+            console.error('signup-form element NOT FOUND!');
         }
     },
 
@@ -163,10 +189,15 @@ const AuthComponent = {
      * Show auth modal
      */
     showAuthModal() {
+        console.log('=== showAuthModal() CALLED ===');
         const modal = document.getElementById('auth-modal');
+        console.log('auth-modal element:', modal);
         if (modal) {
+            console.log('Adding "active" class to modal');
             modal.classList.add('active');
             this.showSignInForm();
+        } else {
+            console.error('auth-modal element NOT FOUND!');
         }
     },
 
@@ -184,11 +215,21 @@ const AuthComponent = {
      * Show sign in form
      */
     showSignInForm() {
+        console.log('=== showSignInForm() CALLED ===');
         const signInContainer = document.getElementById('signin-container');
         const signUpContainer = document.getElementById('signup-container');
 
-        if (signInContainer) signInContainer.style.display = 'block';
-        if (signUpContainer) signUpContainer.style.display = 'none';
+        console.log('signin-container:', signInContainer);
+        console.log('signup-container:', signUpContainer);
+
+        if (signInContainer) {
+            console.log('Setting signin-container display to block');
+            signInContainer.style.display = 'block';
+        }
+        if (signUpContainer) {
+            console.log('Setting signup-container display to none');
+            signUpContainer.style.display = 'none';
+        }
     },
 
     /**
