@@ -145,14 +145,16 @@ const AuthComponent = {
         const signUpForm = document.getElementById('signup-form');
 
         if (signInForm) {
-            signInForm.addEventListener('submit', (e) => {
-                this.handleSignIn(e);
+            signInForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.handleSignIn(e);
             });
         }
 
         if (signUpForm) {
-            signUpForm.addEventListener('submit', (e) => {
-                this.handleSignUp(e);
+            signUpForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.handleSignUp(e);
             });
         }
     },
@@ -204,15 +206,33 @@ const AuthComponent = {
      * Handle sign in
      */
     async handleSignIn(e) {
-        e.preventDefault();
+        // Note: e.preventDefault() is called in the event listener
+        console.log('AuthComponent: handleSignIn called');
 
-        const email = document.getElementById('signin-email').value;
-        const password = document.getElementById('signin-password').value;
+        const emailInput = document.getElementById('signin-email');
+        const passwordInput = document.getElementById('signin-password');
         const errorEl = document.getElementById('signin-error');
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+
+        if (!emailInput || !passwordInput) {
+            console.error('AuthComponent: Email or password input not found');
+            return;
+        }
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
 
         if (errorEl) errorEl.textContent = '';
 
+        // Disable form during submission
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing in...';
+        }
+
         try {
+            console.log('AuthComponent: Attempting sign in for:', email);
+
             const { data, error } = await supabaseClient.auth.signInWithPassword({
                 email,
                 password
@@ -220,6 +240,7 @@ const AuthComponent = {
 
             if (error) throw error;
 
+            console.log('AuthComponent: Sign in successful');
             UIController.showToast('Signed in successfully!', 'success');
             this.hideAuthModal();
 
@@ -227,8 +248,16 @@ const AuthComponent = {
             await SupabaseSync.loadFromSupabase();
 
         } catch (error) {
-            console.error('Sign in error:', error);
-            if (errorEl) errorEl.textContent = error.message;
+            console.error('AuthComponent: Sign in error:', error);
+            if (errorEl) {
+                errorEl.textContent = error.message || 'Failed to sign in. Please check your credentials.';
+            }
+        } finally {
+            // Re-enable form
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign In';
+            }
         }
     },
 
@@ -236,12 +265,23 @@ const AuthComponent = {
      * Handle sign up
      */
     async handleSignUp(e) {
-        e.preventDefault();
+        // Note: e.preventDefault() is called in the event listener
+        console.log('AuthComponent: handleSignUp called');
 
-        const email = document.getElementById('signup-email').value;
-        const password = document.getElementById('signup-password').value;
-        const confirmPassword = document.getElementById('signup-confirm-password').value;
+        const emailInput = document.getElementById('signup-email');
+        const passwordInput = document.getElementById('signup-password');
+        const confirmPasswordInput = document.getElementById('signup-confirm-password');
         const errorEl = document.getElementById('signup-error');
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+
+        if (!emailInput || !passwordInput || !confirmPasswordInput) {
+            console.error('AuthComponent: Form inputs not found');
+            return;
+        }
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
 
         if (errorEl) errorEl.textContent = '';
 
@@ -255,7 +295,15 @@ const AuthComponent = {
             return;
         }
 
+        // Disable form during submission
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating account...';
+        }
+
         try {
+            console.log('AuthComponent: Attempting sign up for:', email);
+
             const { data, error } = await supabaseClient.auth.signUp({
                 email,
                 password,
@@ -266,12 +314,21 @@ const AuthComponent = {
 
             if (error) throw error;
 
+            console.log('AuthComponent: Sign up successful');
             UIController.showToast('Account created! Please check your email to verify.', 'success');
             this.hideAuthModal();
 
         } catch (error) {
-            console.error('Sign up error:', error);
-            if (errorEl) errorEl.textContent = error.message;
+            console.error('AuthComponent: Sign up error:', error);
+            if (errorEl) {
+                errorEl.textContent = error.message || 'Failed to create account. Please try again.';
+            }
+        } finally {
+            // Re-enable form
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Account';
+            }
         }
     },
 
