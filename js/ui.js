@@ -13,7 +13,6 @@ const UIController = {
         StatsDashboardComponent.init();
         ScheduleImportComponent.init();
         ScheduleLookupComponent.init();
-        AdminPanelComponent.init();
 
         // Initialize filters
         this.initFilters();

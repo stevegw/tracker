@@ -7,9 +7,9 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>My Tracker</title>
-    <link rel="stylesheet" href="css/main.css?v=1.0.67">
-    <link rel="stylesheet" href="css/components.css?v=1.0.67">
-    <link rel="stylesheet" href="css/utilities.css?v=1.0.67">
+    <link rel="stylesheet" href="css/main.css?v=1.0.68">
+    <link rel="stylesheet" href="css/components.css?v=1.0.68">
+    <link rel="stylesheet" href="css/utilities.css?v=1.0.68">
 </head>
 <body>
     <!-- Header -->
@@ -95,7 +95,6 @@
             <div style="margin-bottom: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
                 <button class="btn btn-secondary" id="filters-btn">🔍 Filters & Sort</button>
                 <button class="btn btn-secondary" id="schedule-lookup-trigger-btn">📋 Schedule Lookup</button>
-                <button class="btn btn-secondary" id="admin-panel-trigger-btn">🔧 Admin Panel</button>
                 <button class="btn btn-secondary" id="toggle-selection-btn" onclick="ActivityListComponent.toggleSelectionMode()">☑ Select</button>
             </div>
 
@@ -604,167 +603,6 @@
         </div>
     </div>
 
-    <!-- Admin Panel Modal -->
-    <div class="modal" id="admin-panel-modal">
-        <div class="modal-content modal-large">
-            <div class="modal-header">
-                <h2>🔧 Admin: Manage Lookup Schedules</h2>
-                <button class="modal-close" id="admin-panel-modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <!-- Tabs -->
-                <div class="admin-tabs" style="display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 2px solid var(--border);">
-                    <button class="admin-tab active" id="admin-tab-manage" onclick="AdminPanelComponent.switchTab('manage')">
-                        📋 Manage Schedules
-                    </button>
-                    <button class="admin-tab" id="admin-tab-import" onclick="AdminPanelComponent.switchTab('import')">
-                        📅 Import Schedule
-                    </button>
-                </div>
-
-                <!-- Manage Tab Content -->
-                <div id="admin-content-manage">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                        <p style="color: var(--text-secondary); margin: 0;">
-                            Create and manage lookup schedules that users can select when creating activities.
-                        </p>
-                        <button class="btn btn-primary" id="admin-add-lookup-btn">
-                            ＋ New Lookup Schedule
-                        </button>
-                    </div>
-                    <div id="admin-lookup-list">
-                        <!-- Admin lookup schedules will be rendered here -->
-                    </div>
-                </div>
-
-                <!-- Import Tab Content -->
-                <div id="admin-content-import" style="display: none;">
-                    <!-- Input Area -->
-                    <div id="admin-schedule-input-area">
-                        <div class="form-group">
-                            <label>Load Saved Schedule (Optional)</label>
-                            <select id="admin-schedule-load-template" class="form-select">
-                                <option value="">-- Load a saved schedule --</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="admin-schedule-text-input">Paste Class Schedule</label>
-                            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">
-                                Copy and paste your class schedule. Format should include day headers (MONDAY, TUESDAY, etc.)
-                                followed by classes with times (e.g., "05:05 AM Basic Training  Gym").
-                            </p>
-                            <textarea id="admin-schedule-text-input"
-                                      class="form-textarea"
-                                      rows="12"
-                                      placeholder="Example:&#10;MONDAY&#10;05:05 AMBasic Training  Gym&#10;06:00 AMMasters Swim  Indoor Pool&#10;&#10;TUESDAY&#10;06:15 AMBodyPump™  Studio A&#10;..."></textarea>
-                        </div>
-
-                        <div style="display: flex; gap: 12px; margin-top: 16px;">
-                            <button class="btn btn-primary" id="admin-schedule-parse-btn">
-                                Parse Schedule
-                            </button>
-                            <button class="btn btn-secondary" id="admin-schedule-save-template-btn">
-                                Save as Template
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Preview Area -->
-                    <div id="admin-schedule-preview-area" style="display: none;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                            <div>
-                                <button class="btn btn-small btn-secondary" id="admin-schedule-select-all-btn">
-                                    Select All
-                                </button>
-                                <button class="btn btn-small btn-secondary" id="admin-schedule-deselect-all-btn">
-                                    Deselect All
-                                </button>
-                            </div>
-                            <button class="btn btn-small" id="admin-schedule-back-btn">
-                                ← Back to Input
-                            </button>
-                        </div>
-
-                        <div id="admin-schedule-preview-content" class="schedule-preview-content">
-                            <!-- Parsed schedule will be rendered here -->
-                        </div>
-
-                        <div style="margin-top: 24px; text-align: right;">
-                            <button class="btn btn-primary btn-large" id="admin-schedule-import-btn">
-                                Import Selected Classes
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Lookup Form Modal -->
-    <div class="modal" id="admin-lookup-form-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="admin-lookup-form-title">New Lookup Schedule</h2>
-                <button class="modal-close" id="admin-lookup-form-close">&times;</button>
-            </div>
-            <form id="admin-lookup-form">
-                <input type="hidden" id="admin-lookup-id">
-
-                <div class="form-group">
-                    <label for="admin-lookup-title">Title *</label>
-                    <input type="text" id="admin-lookup-title" required class="form-input" placeholder="e.g., BodyPump™ Class">
-                </div>
-
-                <div class="form-group">
-                    <label for="admin-lookup-description">Description</label>
-                    <textarea id="admin-lookup-description" class="form-textarea" rows="2" placeholder="e.g., Full body workout with weights"></textarea>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="admin-lookup-category">Category</label>
-                        <select id="admin-lookup-category" class="form-select">
-                            <option value="">None</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="admin-lookup-cadence">Cadence</label>
-                        <select id="admin-lookup-cadence" class="form-select">
-                            <option value="one-time">One-time</option>
-                            <option value="daily">Daily</option>
-                            <option value="weekly" selected>Weekly</option>
-                            <option value="monthly">Monthly</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="admin-lookup-studio">Studio / Location</label>
-                        <input type="text" id="admin-lookup-studio" class="form-input" placeholder="e.g., Genesis Overland Park">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="admin-lookup-time">Time</label>
-                        <input type="time" id="admin-lookup-time" class="form-input">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="admin-lookup-notes">Notes</label>
-                    <textarea id="admin-lookup-notes" class="form-textarea" rows="3" placeholder="Additional information..."></textarea>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="admin-lookup-cancel-btn">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Lookup Schedule</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
 
@@ -779,23 +617,22 @@
 
     <!-- version.js must NOT have cache-busting param - it needs to run fresh every time to check for updates -->
     <script src="js/version.js"></script>
-    <script src="js/utils.js?v=1.0.67"></script>
-    <script src="js/storage.js?v=1.0.67"></script>
-    <script src="js/supabase-client.js?v=1.0.67"></script>
-    <script src="js/models.js?v=1.0.67"></script>
-    <script src="js/supabase-sync.js?v=1.0.67"></script>
-    <script src="js/components/auth.js?v=1.0.67"></script>
-    <script src="js/components/command-bar.js?v=1.0.67"></script>
-    <script src="js/components/celebrations.js?v=1.0.67"></script>
-    <script src="js/components/header.js?v=1.0.67"></script>
-    <script src="js/components/sidebar.js?v=1.0.67"></script>
-    <script src="js/components/activity-list.js?v=1.0.67"></script>
-    <script src="js/components/activity-form.js?v=1.0.67"></script>
-    <script src="js/components/stats-dashboard.js?v=1.0.67"></script>
-    <script src="js/components/schedule-import.js?v=1.0.67"></script>
-    <script src="js/components/schedule-lookup.js?v=1.0.67"></script>
-    <script src="js/components/admin-panel.js?v=1.0.67"></script>
-    <script src="js/ui.js?v=1.0.67"></script>
-    <script src="js/app.js?v=1.0.67"></script>
+    <script src="js/utils.js?v=1.0.68"></script>
+    <script src="js/storage.js?v=1.0.68"></script>
+    <script src="js/supabase-client.js?v=1.0.68"></script>
+    <script src="js/models.js?v=1.0.68"></script>
+    <script src="js/supabase-sync.js?v=1.0.68"></script>
+    <script src="js/components/auth.js?v=1.0.68"></script>
+    <script src="js/components/command-bar.js?v=1.0.68"></script>
+    <script src="js/components/celebrations.js?v=1.0.68"></script>
+    <script src="js/components/header.js?v=1.0.68"></script>
+    <script src="js/components/sidebar.js?v=1.0.68"></script>
+    <script src="js/components/activity-list.js?v=1.0.68"></script>
+    <script src="js/components/activity-form.js?v=1.0.68"></script>
+    <script src="js/components/stats-dashboard.js?v=1.0.68"></script>
+    <script src="js/components/schedule-import.js?v=1.0.68"></script>
+    <script src="js/components/schedule-lookup.js?v=1.0.68"></script>
+    <script src="js/ui.js?v=1.0.68"></script>
+    <script src="js/app.js?v=1.0.68"></script>
 </body>
 </html>
