@@ -1281,3 +1281,125 @@ body.dark-mode .badge-reminder {
         gap: 4px;
     }
 }
+
+/* Admin Panel Styles */
+
+.admin-lookup-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.admin-category-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.admin-category-header {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    padding: 8px 0;
+}
+
+.admin-lookup-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.admin-lookup-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    transition: all 0.2s;
+}
+
+.admin-lookup-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.admin-lookup-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    gap: 12px;
+}
+
+.admin-lookup-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.admin-lookup-card-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    transition: background 0.2s;
+}
+
+.btn-icon:hover {
+    background: var(--background);
+}
+
+.admin-lookup-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.admin-lookup-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.admin-lookup-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.admin-lookup-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+/* Mobile adjustments for Admin Panel */
+@media (max-width: 768px) {
+    .admin-lookup-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-lookup-card-header {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .admin-lookup-card-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
