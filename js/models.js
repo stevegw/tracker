@@ -520,3 +520,129 @@ class StatsModel {
             .slice(0, limit);
     }
 }
+
+class LookupScheduleModel {
+    constructor() {
+        this.lookups = Storage.getLookupSchedules();
+    }
+
+    /**
+     * Get all lookup schedules
+     */
+    getAll() {
+        return this.lookups;
+    }
+
+    /**
+     * Get lookup schedule by ID
+     */
+    getById(id) {
+        return this.lookups.find(lookup => lookup.id === id);
+    }
+
+    /**
+     * Create new lookup schedule
+     */
+    async create(data) {
+        const lookup = {
+            id: generateUUID(),
+            title: data.title.trim(),
+            description: data.description ? data.description.trim() : '',
+            categoryId: data.categoryId || null,
+            cadence: data.cadence || 'weekly',
+            studio: data.studio || '',
+            time: data.time || '',
+            notes: data.notes || '',
+            resources: data.resources || [],
+            createdAt: Date.now(),
+            updatedAt: Date.now()
+        };
+
+        // Save to Supabase (primary source)
+        if (typeof SupabaseSync !== 'undefined') {
+            const saved = await SupabaseSync.saveLookupSchedule(lookup);
+            if (saved) {
+                // Reload from cache
+                this.lookups = Storage.getLookupSchedules();
+                return saved;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Update lookup schedule
+     */
+    async update(id, updates) {
+        const lookup = this.getById(id);
+        if (!lookup) return null;
+
+        const updatedLookup = {
+            ...lookup,
+            ...updates,
+            updatedAt: Date.now()
+        };
+
+        // Save to Supabase (primary source)
+        if (typeof SupabaseSync !== 'undefined') {
+            const saved = await SupabaseSync.saveLookupSchedule(updatedLookup);
+            if (saved) {
+                // Reload from cache
+                this.lookups = Storage.getLookupSchedules();
+                return saved;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Delete lookup schedule
+     */
+    async delete(id) {
+        const lookup = this.getById(id);
+        if (!lookup) return false;
+
+        // Delete from Supabase (primary source)
+        if (typeof SupabaseSync !== 'undefined') {
+            await SupabaseSync.deleteLookupSchedule(id);
+            // Reload from cache
+            this.lookups = Storage.getLookupSchedules();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Create a regular activity from a lookup schedule
+     */
+    createActivityFromLookup(lookupId, overrides = {}) {
+        const lookup = this.getById(lookupId);
+        if (!lookup) return null;
+
+        const activityModel = new ActivityModel();
+        const activityData = {
+            title: lookup.title,
+            description: lookup.description,
+            categoryId: lookup.categoryId,
+            cadence: lookup.cadence,
+            studio: lookup.studio,
+            time: lookup.time,
+            notes: lookup.notes,
+            resources: lookup.resources || [],
+            type: 'regular',
+            ...overrides
+        };
+
+        return activityModel.create(activityData);
+    }
+
+    /**
+     * Reload from localStorage cache
+     */
+    reload() {
+        this.lookups = Storage.getLookupSchedules();
+    }
+}

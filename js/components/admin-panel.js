@@ -116,10 +116,10 @@ const AdminPanelComponent = {
 
         if (lookupId) {
             // Edit mode
-            const activityModel = new ActivityModel();
-            const lookup = activityModel.getById(lookupId);
+            const lookupModel = new LookupScheduleModel();
+            const lookup = lookupModel.getById(lookupId);
 
-            if (!lookup || lookup.type !== 'lookup') return;
+            if (!lookup) return;
 
             title.textContent = 'Edit Lookup Schedule';
             document.getElementById('admin-lookup-id').value = lookup.id;
@@ -177,7 +177,7 @@ const AdminPanelComponent = {
     /**
      * Handle form submission
      */
-    handleFormSubmit() {
+    async handleFormSubmit() {
         const lookupId = document.getElementById('admin-lookup-id').value;
         const title = document.getElementById('admin-lookup-title').value.trim();
         const description = document.getElementById('admin-lookup-description').value.trim();
@@ -199,25 +199,29 @@ const AdminPanelComponent = {
             cadence,
             studio,
             time,
-            notes,
-            type: 'lookup' // Mark as lookup schedule
+            notes
         };
 
-        const activityModel = new ActivityModel();
+        const lookupModel = new LookupScheduleModel();
 
-        if (lookupId) {
-            // Update existing lookup schedule
-            activityModel.update(lookupId, data);
-            UIController.showToast('Lookup schedule updated', 'success');
-        } else {
-            // Create new lookup schedule
-            activityModel.create(data);
-            UIController.showToast('Lookup schedule created', 'success');
+        try {
+            if (lookupId) {
+                // Update existing lookup schedule
+                await lookupModel.update(lookupId, data);
+                UIController.showToast('Lookup schedule updated', 'success');
+            } else {
+                // Create new lookup schedule
+                await lookupModel.create(data);
+                UIController.showToast('Lookup schedule created', 'success');
+            }
+
+            this.hideLookupForm();
+            this.renderLookupSchedules();
+            UIController.refresh();
+        } catch (error) {
+            console.error('Error saving lookup schedule:', error);
+            UIController.showToast('Error saving lookup schedule', 'error');
         }
-
-        this.hideLookupForm();
-        this.renderLookupSchedules();
-        UIController.refresh();
     },
 
     /**
@@ -227,9 +231,9 @@ const AdminPanelComponent = {
         const container = document.getElementById('admin-lookup-list');
         if (!container) return;
 
-        const activityModel = new ActivityModel();
+        const lookupModel = new LookupScheduleModel();
         const categoryModel = new CategoryModel();
-        const lookupSchedules = activityModel.getLookupSchedules();
+        const lookupSchedules = lookupModel.getAll();
 
         if (lookupSchedules.length === 0) {
             container.innerHTML = `
@@ -324,20 +328,26 @@ const AdminPanelComponent = {
     /**
      * Delete a lookup schedule
      */
-    deleteLookup(lookupId) {
+    async deleteLookup(lookupId) {
         if (!confirm('Delete this lookup schedule? This will not affect any activities created from it.')) {
             return;
         }
 
-        const activityModel = new ActivityModel();
-        const success = activityModel.delete(lookupId);
+        const lookupModel = new LookupScheduleModel();
 
-        if (success) {
-            this.renderLookupSchedules();
-            UIController.showToast('Lookup schedule deleted', 'success');
-            UIController.refresh();
-        } else {
-            UIController.showToast('Failed to delete lookup schedule', 'error');
+        try {
+            const success = await lookupModel.delete(lookupId);
+
+            if (success) {
+                this.renderLookupSchedules();
+                UIController.showToast('Lookup schedule deleted', 'success');
+                UIController.refresh();
+            } else {
+                UIController.showToast('Failed to delete lookup schedule', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting lookup schedule:', error);
+            UIController.showToast('Error deleting lookup schedule', 'error');
         }
     }
 };

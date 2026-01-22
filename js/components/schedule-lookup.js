@@ -74,9 +74,9 @@ const ScheduleLookupComponent = {
         const container = document.getElementById('schedule-lookup-list');
         if (!container) return;
 
-        const activityModel = new ActivityModel();
+        const lookupModel = new LookupScheduleModel();
         const categoryModel = new CategoryModel();
-        const lookupSchedules = activityModel.getLookupSchedules();
+        const lookupSchedules = lookupModel.getAll();
 
         if (lookupSchedules.length === 0) {
             container.innerHTML = `
@@ -153,10 +153,10 @@ const ScheduleLookupComponent = {
      * Add a lookup schedule to activities
      */
     addToActivities(lookupId) {
-        const activityModel = new ActivityModel();
-        const lookup = activityModel.getById(lookupId);
+        const lookupModel = new LookupScheduleModel();
+        const lookup = lookupModel.getById(lookupId);
 
-        if (!lookup || lookup.type !== 'lookup') {
+        if (!lookup) {
             UIController.showToast('Lookup schedule not found', 'error');
             return;
         }
@@ -170,7 +170,7 @@ const ScheduleLookupComponent = {
         }
 
         // Create a regular activity from the lookup template
-        const activity = activityModel.createFromLookup(lookupId, { dueDate });
+        const activity = lookupModel.createActivityFromLookup(lookupId, { dueDate });
 
         if (activity) {
             UIController.refresh();
@@ -183,19 +183,25 @@ const ScheduleLookupComponent = {
     /**
      * Delete a lookup schedule
      */
-    deleteLookup(lookupId) {
+    async deleteLookup(lookupId) {
         if (!confirm('Delete this lookup schedule? This will not affect any activities you\'ve already created from it.')) {
             return;
         }
 
-        const activityModel = new ActivityModel();
-        const success = activityModel.delete(lookupId);
+        const lookupModel = new LookupScheduleModel();
 
-        if (success) {
-            this.renderLookupSchedules();
-            UIController.showToast('Lookup schedule deleted', 'success');
-        } else {
-            UIController.showToast('Failed to delete lookup schedule', 'error');
+        try {
+            const success = await lookupModel.delete(lookupId);
+
+            if (success) {
+                this.renderLookupSchedules();
+                UIController.showToast('Lookup schedule deleted', 'success');
+            } else {
+                UIController.showToast('Failed to delete lookup schedule', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting lookup schedule:', error);
+            UIController.showToast('Error deleting lookup schedule', 'error');
         }
     },
 

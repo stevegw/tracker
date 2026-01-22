@@ -4,7 +4,8 @@ const STORAGE_KEYS = {
     CATEGORIES: 'enablement_categories',
     ACTIVITIES: 'enablement_activities',
     SETTINGS: 'enablement_settings',
-    SCHEDULES: 'enablement_schedules'
+    SCHEDULES: 'enablement_schedules',
+    LOOKUP_SCHEDULES: 'enablement_lookup_schedules'
 };
 
 const Storage = {
@@ -74,6 +75,21 @@ const Storage = {
      */
     saveSchedules(schedules) {
         localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(schedules));
+    },
+
+    /**
+     * Get all lookup schedules from localStorage (cached from Supabase)
+     */
+    getLookupSchedules() {
+        const data = localStorage.getItem(STORAGE_KEYS.LOOKUP_SCHEDULES);
+        return data ? JSON.parse(data) : [];
+    },
+
+    /**
+     * Save lookup schedules to localStorage (cache)
+     */
+    saveLookupSchedules(lookups) {
+        localStorage.setItem(STORAGE_KEYS.LOOKUP_SCHEDULES, JSON.stringify(lookups));
     },
 
     /**

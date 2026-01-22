@@ -90,6 +90,13 @@ const SupabaseSync = {
 
             if (actError) throw actError;
 
+            // Load lookup schedules (shared across all users)
+            const { data: lookupSchedules, error: lookupError } = await supabaseClient
+                .from('lookup_schedules')
+                .select('*');
+
+            if (lookupError) throw lookupError;
+
             // Convert snake_case to camelCase and store in localStorage
             if (categories) {
                 const camelCategories = categories.map(cat => this.toCamelCase(cat));
@@ -99,6 +106,11 @@ const SupabaseSync = {
             if (activities) {
                 const camelActivities = activities.map(act => this.toCamelCase(act));
                 localStorage.setItem('enablement_activities', JSON.stringify(camelActivities));
+            }
+
+            if (lookupSchedules) {
+                const camelLookups = lookupSchedules.map(lookup => this.toCamelCase(lookup));
+                localStorage.setItem('enablement_lookup_schedules', JSON.stringify(camelLookups));
             }
 
             console.log('Data loaded from Supabase');
@@ -252,6 +264,109 @@ const SupabaseSync = {
             }
             console.error('Error deleting activity:', error);
             UIController.showToast('Error deleting activity', 'error');
+        }
+    },
+
+    /**
+     * Save lookup schedule to Supabase
+     */
+    async saveLookupSchedule(lookup) {
+        const user = await getCurrentUser();
+        if (!user) return;
+
+        try {
+            // Convert to snake_case for database
+            const snakeLookup = this.toSnakeCase(lookup);
+            const lookupData = {
+                ...snakeLookup,
+                created_by: user.id
+            };
+
+            const { data, error } = await supabaseClient
+                .from('lookup_schedules')
+                .upsert(lookupData)
+                .select();
+
+            if (error) throw error;
+
+            console.log('Lookup schedule saved to Supabase');
+
+            // Reload all lookup schedules to refresh cache
+            await this.loadLookupSchedulesFromSupabase();
+
+            // Convert back to camelCase
+            return data[0] ? this.toCamelCase(data[0]) : null;
+
+        } catch (error) {
+            // Ignore AbortError - happens during page refresh
+            if (error.name === 'AbortError') {
+                console.log('Lookup schedule save aborted (page refresh)');
+                return;
+            }
+            console.error('Error saving lookup schedule:', error);
+            console.error('Lookup data that failed:', lookupData);
+            UIController.showToast('Error syncing lookup schedule', 'error');
+        }
+    },
+
+    /**
+     * Delete lookup schedule from Supabase
+     */
+    async deleteLookupSchedule(lookupId) {
+        const user = await getCurrentUser();
+        if (!user) return;
+
+        try {
+            const { error } = await supabaseClient
+                .from('lookup_schedules')
+                .delete()
+                .eq('id', lookupId);
+
+            if (error) throw error;
+
+            console.log('Lookup schedule deleted from Supabase');
+
+            // Reload all lookup schedules to refresh cache
+            await this.loadLookupSchedulesFromSupabase();
+
+        } catch (error) {
+            // Ignore AbortError - happens during page refresh
+            if (error.name === 'AbortError') {
+                console.log('Lookup schedule delete aborted (page refresh)');
+                return;
+            }
+            console.error('Error deleting lookup schedule:', error);
+            UIController.showToast('Error deleting lookup schedule', 'error');
+        }
+    },
+
+    /**
+     * Load lookup schedules from Supabase (shared across all users)
+     */
+    async loadLookupSchedulesFromSupabase() {
+        const user = await getCurrentUser();
+        if (!user) return;
+
+        try {
+            const { data: lookupSchedules, error } = await supabaseClient
+                .from('lookup_schedules')
+                .select('*');
+
+            if (error) throw error;
+
+            if (lookupSchedules) {
+                const camelLookups = lookupSchedules.map(lookup => this.toCamelCase(lookup));
+                localStorage.setItem('enablement_lookup_schedules', JSON.stringify(camelLookups));
+                console.log('Lookup schedules loaded from Supabase:', camelLookups.length);
+            }
+
+        } catch (error) {
+            // Ignore AbortError - happens during page refresh
+            if (error.name === 'AbortError') {
+                console.log('Lookup schedules load aborted (page refresh)');
+                return;
+            }
+            console.error('Error loading lookup schedules:', error);
         }
     }
 };
