@@ -215,14 +215,16 @@ const AdminAuth = {
         const signUpForm = document.getElementById('admin-signup-form');
 
         if (signInForm) {
-            signInForm.addEventListener('submit', (e) => {
-                this.handleSignIn(e);
+            signInForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.handleSignIn(e);
             });
         }
 
         if (signUpForm) {
-            signUpForm.addEventListener('submit', (e) => {
-                this.handleSignUp(e);
+            signUpForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.handleSignUp(e);
             });
         }
     },
@@ -274,15 +276,33 @@ const AdminAuth = {
      * Handle sign in
      */
     async handleSignIn(e) {
-        e.preventDefault();
+        // Note: e.preventDefault() is called in the event listener
+        console.log('AdminAuth: handleSignIn called');
 
-        const email = document.getElementById('admin-signin-email').value;
-        const password = document.getElementById('admin-signin-password').value;
+        const emailInput = document.getElementById('admin-signin-email');
+        const passwordInput = document.getElementById('admin-signin-password');
         const errorEl = document.getElementById('admin-signin-error');
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+
+        if (!emailInput || !passwordInput) {
+            console.error('AdminAuth: Email or password input not found');
+            return;
+        }
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
 
         if (errorEl) errorEl.textContent = '';
 
+        // Disable form during submission
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing in...';
+        }
+
         try {
+            console.log('AdminAuth: Attempting sign in for:', email);
+
             const { data, error } = await supabaseClient.auth.signInWithPassword({
                 email,
                 password
@@ -290,12 +310,21 @@ const AdminAuth = {
 
             if (error) throw error;
 
+            console.log('AdminAuth: Sign in successful');
             this.hideAuthModal();
             this.showToast('Signed in successfully!', 'success');
 
         } catch (error) {
-            console.error('Admin sign in error:', error);
-            if (errorEl) errorEl.textContent = error.message;
+            console.error('AdminAuth: Sign in error:', error);
+            if (errorEl) {
+                errorEl.textContent = error.message || 'Failed to sign in. Please check your credentials.';
+            }
+        } finally {
+            // Re-enable form
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign In';
+            }
         }
     },
 
@@ -303,12 +332,23 @@ const AdminAuth = {
      * Handle sign up
      */
     async handleSignUp(e) {
-        e.preventDefault();
+        // Note: e.preventDefault() is called in the event listener
+        console.log('AdminAuth: handleSignUp called');
 
-        const email = document.getElementById('admin-signup-email').value;
-        const password = document.getElementById('admin-signup-password').value;
-        const confirmPassword = document.getElementById('admin-signup-confirm-password').value;
+        const emailInput = document.getElementById('admin-signup-email');
+        const passwordInput = document.getElementById('admin-signup-password');
+        const confirmPasswordInput = document.getElementById('admin-signup-confirm-password');
         const errorEl = document.getElementById('admin-signup-error');
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+
+        if (!emailInput || !passwordInput || !confirmPasswordInput) {
+            console.error('AdminAuth: Form inputs not found');
+            return;
+        }
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
 
         if (errorEl) errorEl.textContent = '';
 
@@ -322,7 +362,15 @@ const AdminAuth = {
             return;
         }
 
+        // Disable form during submission
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating account...';
+        }
+
         try {
+            console.log('AdminAuth: Attempting sign up for:', email);
+
             const { data, error } = await supabaseClient.auth.signUp({
                 email,
                 password,
@@ -333,12 +381,21 @@ const AdminAuth = {
 
             if (error) throw error;
 
-            this.showToast('Account created! Please contact an admin to grant admin privileges.', 'info');
+            console.log('AdminAuth: Sign up successful');
+            this.showToast('Account created! Check ADMIN_SETUP.md to learn how to grant admin privileges.', 'info');
             this.hideAuthModal();
 
         } catch (error) {
-            console.error('Admin sign up error:', error);
-            if (errorEl) errorEl.textContent = error.message;
+            console.error('AdminAuth: Sign up error:', error);
+            if (errorEl) {
+                errorEl.textContent = error.message || 'Failed to create account. Please try again.';
+            }
+        } finally {
+            // Re-enable form
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Account';
+            }
         }
     },
 
