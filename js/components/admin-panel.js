@@ -3,11 +3,17 @@
 
 const AdminPanelComponent = {
     currentLookupId: null,
+    scheduleData: null,
+    selectedClasses: new Set(),
+    savedSchedules: [],
+    currentTab: 'manage',
 
     /**
      * Initialize the Admin Panel Component
      */
     init() {
+        // Load saved schedules
+        this.savedSchedules = Storage.getSchedules();
         // Close button for main panel
         const closeBtn = document.getElementById('admin-panel-modal-close');
         if (closeBtn) {
@@ -77,6 +83,66 @@ const AdminPanelComponent = {
             });
         }
 
+        // ===== Import Schedule Tab Event Listeners =====
+
+        // Parse schedule button
+        const parseBtn = document.getElementById('admin-schedule-parse-btn');
+        if (parseBtn) {
+            parseBtn.addEventListener('click', () => {
+                this.parseSchedule();
+            });
+        }
+
+        // Import button
+        const importBtn = document.getElementById('admin-schedule-import-btn');
+        if (importBtn) {
+            importBtn.addEventListener('click', () => {
+                this.importSelectedClasses();
+            });
+        }
+
+        // Save as template button
+        const saveTemplateBtn = document.getElementById('admin-schedule-save-template-btn');
+        if (saveTemplateBtn) {
+            saveTemplateBtn.addEventListener('click', () => {
+                this.saveAsTemplate();
+            });
+        }
+
+        // Load template select
+        const loadTemplateSelect = document.getElementById('admin-schedule-load-template');
+        if (loadTemplateSelect) {
+            loadTemplateSelect.addEventListener('change', (e) => {
+                if (e.target.value) {
+                    this.loadTemplate(e.target.value);
+                }
+            });
+        }
+
+        // Select all button
+        const selectAllBtn = document.getElementById('admin-schedule-select-all-btn');
+        if (selectAllBtn) {
+            selectAllBtn.addEventListener('click', () => {
+                this.selectAll();
+            });
+        }
+
+        // Deselect all button
+        const deselectAllBtn = document.getElementById('admin-schedule-deselect-all-btn');
+        if (deselectAllBtn) {
+            deselectAllBtn.addEventListener('click', () => {
+                this.deselectAll();
+            });
+        }
+
+        // Back to input button
+        const backBtn = document.getElementById('admin-schedule-back-btn');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                this.resetImportView();
+            });
+        }
+
         console.log('Admin Panel Component initialized');
     },
 
@@ -87,6 +153,8 @@ const AdminPanelComponent = {
         const modal = document.getElementById('admin-panel-modal');
         if (modal) {
             modal.classList.add('active');
+            // Switch to manage tab by default
+            this.switchTab('manage');
             this.renderLookupSchedules();
         }
     },
@@ -349,5 +417,302 @@ const AdminPanelComponent = {
             console.error('Error deleting lookup schedule:', error);
             UIController.showToast('Error deleting lookup schedule', 'error');
         }
+    },
+
+    // ===== Tab Management =====
+
+    /**
+     * Switch between manage and import tabs
+     */
+    switchTab(tabName) {
+        this.currentTab = tabName;
+
+        // Update tab buttons
+        const manageTab = document.getElementById('admin-tab-manage');
+        const importTab = document.getElementById('admin-tab-import');
+        const manageContent = document.getElementById('admin-content-manage');
+        const importContent = document.getElementById('admin-content-import');
+
+        if (tabName === 'manage') {
+            manageTab.classList.add('active');
+            importTab.classList.remove('active');
+            manageContent.style.display = 'block';
+            importContent.style.display = 'none';
+        } else {
+            manageTab.classList.remove('active');
+            importTab.classList.add('active');
+            manageContent.style.display = 'none';
+            importContent.style.display = 'block';
+            this.renderTemplateList();
+        }
+    },
+
+    // ===== Import Schedule Functionality =====
+
+    /**
+     * Reset the import view to initial state
+     */
+    resetImportView() {
+        const inputArea = document.getElementById('admin-schedule-input-area');
+        const previewArea = document.getElementById('admin-schedule-preview-area');
+        if (inputArea) inputArea.style.display = 'block';
+        if (previewArea) previewArea.style.display = 'none';
+
+        const textArea = document.getElementById('admin-schedule-text-input');
+        if (textArea) textArea.value = '';
+
+        this.scheduleData = null;
+        this.selectedClasses.clear();
+    },
+
+    /**
+     * Render list of saved templates
+     */
+    renderTemplateList() {
+        const select = document.getElementById('admin-schedule-load-template');
+        if (!select) return;
+
+        select.innerHTML = '<option value="">-- Load a saved schedule --</option>';
+        this.savedSchedules.forEach((schedule, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = schedule.name;
+            select.appendChild(option);
+        });
+    },
+
+    /**
+     * Load a saved template
+     */
+    loadTemplate(index) {
+        const schedule = this.savedSchedules[index];
+        if (!schedule) return;
+
+        const textArea = document.getElementById('admin-schedule-text-input');
+        if (textArea) {
+            textArea.value = schedule.text;
+        }
+
+        UIController.showToast(`Loaded schedule: ${schedule.name}`, 'success');
+    },
+
+    /**
+     * Parse the schedule text
+     */
+    parseSchedule() {
+        const textArea = document.getElementById('admin-schedule-text-input');
+        if (!textArea) return;
+
+        const text = textArea.value.trim();
+        if (!text) {
+            UIController.showToast('Please paste some schedule text first', 'error');
+            return;
+        }
+
+        const result = parseScheduleText(text);
+
+        if (!result.success) {
+            UIController.showToast(result.error, 'error');
+            return;
+        }
+
+        this.scheduleData = result.data;
+        this.selectedClasses.clear();
+        this.renderPreview();
+
+        // Show preview, hide input
+        const inputArea = document.getElementById('admin-schedule-input-area');
+        const previewArea = document.getElementById('admin-schedule-preview-area');
+        if (inputArea) inputArea.style.display = 'none';
+        if (previewArea) previewArea.style.display = 'block';
+
+        UIController.showToast('Schedule parsed successfully! Select classes to import.', 'success');
+    },
+
+    /**
+     * Render the preview of parsed schedule
+     */
+    renderPreview() {
+        const container = document.getElementById('admin-schedule-preview-content');
+        if (!container || !this.scheduleData) return;
+
+        const daysOrder = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+        let html = '';
+
+        daysOrder.forEach(day => {
+            const classes = this.scheduleData[day];
+            if (!classes || classes.length === 0) return;
+
+            html += `
+                <div class="schedule-day-section">
+                    <h3 class="schedule-day-header">${day}</h3>
+                    <div class="schedule-classes-list">
+            `;
+
+            classes.forEach((classItem, index) => {
+                const key = `${day}-${index}`;
+                const isSelected = this.selectedClasses.has(key);
+
+                html += `
+                    <label class="schedule-class-item ${isSelected ? 'selected' : ''}">
+                        <input type="checkbox"
+                               ${isSelected ? 'checked' : ''}
+                               onchange="AdminPanelComponent.toggleClass('${day}', ${index})">
+                        <div class="schedule-class-info">
+                            <div class="schedule-class-name">${escapeHTML(classItem.className)}</div>
+                            <div class="schedule-class-meta">
+                                <span class="schedule-class-time">🕐 ${escapeHTML(classItem.time)}</span>
+                                ${classItem.location ? `<span class="schedule-class-location">📍 ${escapeHTML(classItem.location)}</span>` : ''}
+                            </div>
+                        </div>
+                    </label>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    },
+
+    /**
+     * Toggle class selection
+     */
+    toggleClass(day, index) {
+        const key = `${day}-${index}`;
+        if (this.selectedClasses.has(key)) {
+            this.selectedClasses.delete(key);
+        } else {
+            this.selectedClasses.add(key);
+        }
+        this.renderPreview();
+        this.updateSelectionCount();
+    },
+
+    /**
+     * Select all classes
+     */
+    selectAll() {
+        const daysOrder = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+        daysOrder.forEach(day => {
+            const classes = this.scheduleData[day];
+            if (classes) {
+                classes.forEach((_, index) => {
+                    this.selectedClasses.add(`${day}-${index}`);
+                });
+            }
+        });
+        this.renderPreview();
+        this.updateSelectionCount();
+    },
+
+    /**
+     * Deselect all classes
+     */
+    deselectAll() {
+        this.selectedClasses.clear();
+        this.renderPreview();
+        this.updateSelectionCount();
+    },
+
+    /**
+     * Update selection count display
+     */
+    updateSelectionCount() {
+        const count = this.selectedClasses.size;
+        const importBtn = document.getElementById('admin-schedule-import-btn');
+        if (importBtn) {
+            importBtn.textContent = count > 0
+                ? `Import ${count} Selected ${count === 1 ? 'Class' : 'Classes'}`
+                : 'Import Selected Classes';
+        }
+    },
+
+    /**
+     * Import selected classes as lookup schedule templates
+     */
+    async importSelectedClasses() {
+        if (this.selectedClasses.size === 0) {
+            UIController.showToast('Please select at least one class to import', 'error');
+            return;
+        }
+
+        const categoryModel = new CategoryModel();
+        const lookupModel = new LookupScheduleModel();
+
+        // Find or create "Classes" category
+        let classesCategory = categoryModel.getAll().find(cat => cat.name === 'Classes');
+        if (!classesCategory) {
+            classesCategory = categoryModel.create('Classes', 'Fitness and activity classes');
+        }
+
+        let importedCount = 0;
+
+        // Create lookup schedule templates for selected classes
+        for (const key of this.selectedClasses) {
+            const [day, indexStr] = key.split('-');
+            const index = parseInt(indexStr, 10);
+            const classItem = this.scheduleData[day][index];
+
+            if (!classItem) continue;
+
+            // Create lookup schedule template (not a regular activity)
+            await lookupModel.create({
+                title: classItem.className,
+                description: `${day} at ${classItem.time}`,
+                categoryId: classesCategory.id,
+                cadence: 'weekly',
+                studio: classItem.location,
+                time: classItem.time,
+                notes: `Lookup schedule - imported on ${formatDate(Date.now())}`
+            });
+
+            importedCount++;
+        }
+
+        // Refresh the manage tab to show the new schedules
+        this.renderLookupSchedules();
+
+        // Reset the import view
+        this.resetImportView();
+
+        // Switch back to manage tab
+        this.switchTab('manage');
+
+        // Refresh UI
+        UIController.refresh();
+
+        // Show success message
+        UIController.showToast(`Successfully imported ${importedCount} lookup ${importedCount === 1 ? 'schedule' : 'schedules'}! They are now available to all users.`, 'success');
+    },
+
+    /**
+     * Save current schedule as a template
+     */
+    saveAsTemplate() {
+        const textArea = document.getElementById('admin-schedule-text-input');
+        if (!textArea || !textArea.value.trim()) {
+            UIController.showToast('No schedule text to save', 'error');
+            return;
+        }
+
+        const name = prompt('Enter a name for this schedule template:');
+        if (!name) return;
+
+        const template = {
+            id: generateUUID(),
+            name: name.trim(),
+            text: textArea.value.trim(),
+            createdAt: Date.now()
+        };
+
+        this.savedSchedules.push(template);
+        Storage.saveSchedules(this.savedSchedules);
+
+        this.renderTemplateList();
+        UIController.showToast(`Schedule template "${name}" saved!`, 'success');
     }
 };

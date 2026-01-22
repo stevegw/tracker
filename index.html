@@ -94,7 +94,6 @@
             <!-- Action Buttons -->
             <div style="margin-bottom: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
                 <button class="btn btn-secondary" id="filters-btn">🔍 Filters & Sort</button>
-                <button class="btn btn-secondary" id="schedule-import-trigger-btn">📅 Import Schedule</button>
                 <button class="btn btn-secondary" id="schedule-lookup-trigger-btn">📋 Schedule Lookup</button>
                 <button class="btn btn-secondary" id="admin-panel-trigger-btn">🔧 Admin Panel</button>
                 <button class="btn btn-secondary" id="toggle-selection-btn" onclick="ActivityListComponent.toggleSelectionMode()">☑ Select</button>
@@ -613,16 +612,90 @@
                 <button class="modal-close" id="admin-panel-modal-close">&times;</button>
             </div>
             <div class="modal-body">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <p style="color: var(--text-secondary); margin: 0;">
-                        Create and manage lookup schedules that users can select when creating activities.
-                    </p>
-                    <button class="btn btn-primary" id="admin-add-lookup-btn">
-                        ＋ New Lookup Schedule
+                <!-- Tabs -->
+                <div class="admin-tabs" style="display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 2px solid var(--border);">
+                    <button class="admin-tab active" id="admin-tab-manage" onclick="AdminPanelComponent.switchTab('manage')">
+                        📋 Manage Schedules
+                    </button>
+                    <button class="admin-tab" id="admin-tab-import" onclick="AdminPanelComponent.switchTab('import')">
+                        📅 Import Schedule
                     </button>
                 </div>
-                <div id="admin-lookup-list">
-                    <!-- Admin lookup schedules will be rendered here -->
+
+                <!-- Manage Tab Content -->
+                <div id="admin-content-manage">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <p style="color: var(--text-secondary); margin: 0;">
+                            Create and manage lookup schedules that users can select when creating activities.
+                        </p>
+                        <button class="btn btn-primary" id="admin-add-lookup-btn">
+                            ＋ New Lookup Schedule
+                        </button>
+                    </div>
+                    <div id="admin-lookup-list">
+                        <!-- Admin lookup schedules will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Import Tab Content -->
+                <div id="admin-content-import" style="display: none;">
+                    <!-- Input Area -->
+                    <div id="admin-schedule-input-area">
+                        <div class="form-group">
+                            <label>Load Saved Schedule (Optional)</label>
+                            <select id="admin-schedule-load-template" class="form-select">
+                                <option value="">-- Load a saved schedule --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="admin-schedule-text-input">Paste Class Schedule</label>
+                            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">
+                                Copy and paste your class schedule. Format should include day headers (MONDAY, TUESDAY, etc.)
+                                followed by classes with times (e.g., "05:05 AM Basic Training  Gym").
+                            </p>
+                            <textarea id="admin-schedule-text-input"
+                                      class="form-textarea"
+                                      rows="12"
+                                      placeholder="Example:&#10;MONDAY&#10;05:05 AMBasic Training  Gym&#10;06:00 AMMasters Swim  Indoor Pool&#10;&#10;TUESDAY&#10;06:15 AMBodyPump™  Studio A&#10;..."></textarea>
+                        </div>
+
+                        <div style="display: flex; gap: 12px; margin-top: 16px;">
+                            <button class="btn btn-primary" id="admin-schedule-parse-btn">
+                                Parse Schedule
+                            </button>
+                            <button class="btn btn-secondary" id="admin-schedule-save-template-btn">
+                                Save as Template
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Preview Area -->
+                    <div id="admin-schedule-preview-area" style="display: none;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <div>
+                                <button class="btn btn-small btn-secondary" id="admin-schedule-select-all-btn">
+                                    Select All
+                                </button>
+                                <button class="btn btn-small btn-secondary" id="admin-schedule-deselect-all-btn">
+                                    Deselect All
+                                </button>
+                            </div>
+                            <button class="btn btn-small" id="admin-schedule-back-btn">
+                                ← Back to Input
+                            </button>
+                        </div>
+
+                        <div id="admin-schedule-preview-content" class="schedule-preview-content">
+                            <!-- Parsed schedule will be rendered here -->
+                        </div>
+
+                        <div style="margin-top: 24px; text-align: right;">
+                            <button class="btn btn-primary btn-large" id="admin-schedule-import-btn">
+                                Import Selected Classes
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

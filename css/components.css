@@ -1284,6 +1284,37 @@ body.dark-mode .badge-reminder {
 
 /* Admin Panel Styles */
 
+/* Admin Panel Tabs */
+.admin-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid var(--border);
+}
+
+.admin-tab {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    margin-bottom: -2px;
+}
+
+.admin-tab:hover {
+    color: var(--text-primary);
+    background: var(--surface);
+}
+
+.admin-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
 .admin-lookup-grid {
     display: flex;
     flex-direction: column;
