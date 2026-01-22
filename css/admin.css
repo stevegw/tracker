@@ -1,0 +1,334 @@
+/* Admin Page Specific Styles */
+
+/* Admin Header */
+.admin-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+}
+
+.admin-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.admin-header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+}
+
+.admin-header-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.admin-header-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+.admin-header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.admin-user-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-user-email {
+    font-size: 14px;
+    color: var(--text-secondary);
+    padding: 8px 12px;
+    background: var(--background);
+    border-radius: var(--radius-sm);
+}
+
+/* Admin Main Content */
+.admin-main {
+    min-height: calc(100vh - 70px);
+    background: var(--background);
+    padding: 32px 24px;
+}
+
+.admin-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Admin Tabs */
+.admin-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 0;
+}
+
+.admin-tab {
+    background: transparent;
+    border: none;
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s ease;
+}
+
+.admin-tab:hover {
+    color: var(--text-primary);
+    background: rgba(var(--primary-rgb), 0.05);
+}
+
+.admin-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+/* Admin Tab Content */
+.admin-tab-content {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.admin-content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.admin-content-description {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 15px;
+    max-width: 600px;
+}
+
+/* Auth Prompt */
+.admin-auth-prompt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 70px);
+    background: var(--background);
+}
+
+.admin-auth-prompt-content {
+    text-align: center;
+    max-width: 400px;
+    padding: 48px 32px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.admin-auth-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+}
+
+.admin-auth-prompt-content h2 {
+    font-size: 24px;
+    margin: 0 0 16px 0;
+    color: var(--text-primary);
+}
+
+.admin-auth-prompt-content p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin: 0 0 32px 0;
+    line-height: 1.6;
+}
+
+/* Access Denied */
+.admin-access-denied {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 70px);
+    background: var(--background);
+}
+
+.admin-access-denied-content {
+    text-align: center;
+    max-width: 500px;
+    padding: 48px 32px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.admin-access-denied-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+}
+
+.admin-access-denied-content h2 {
+    font-size: 24px;
+    margin: 0 0 16px 0;
+    color: var(--text-primary);
+}
+
+.admin-access-denied-content p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin: 0 0 16px 0;
+    line-height: 1.6;
+}
+
+.admin-access-denied-content strong {
+    color: var(--text-primary);
+}
+
+/* Admin Toast */
+.admin-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface);
+    color: var(--text-primary);
+    padding: 16px 24px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    max-width: 400px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.admin-toast-show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.admin-toast-success {
+    border-left-color: #22c55e;
+}
+
+.admin-toast-error {
+    border-left-color: #ef4444;
+}
+
+.admin-toast-info {
+    border-left-color: #3b82f6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-header {
+        padding: 12px 16px;
+    }
+
+    .admin-header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .admin-header-left {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .admin-header-title {
+        font-size: 20px;
+    }
+
+    .admin-header-subtitle {
+        font-size: 12px;
+    }
+
+    .admin-header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .admin-main {
+        padding: 16px;
+    }
+
+    .admin-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-tab {
+        padding: 10px 16px;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .admin-content-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-auth-prompt-content,
+    .admin-access-denied-content {
+        margin: 16px;
+        padding: 32px 24px;
+    }
+
+    .admin-toast {
+        bottom: 16px;
+        right: 16px;
+        left: 16px;
+        max-width: none;
+    }
+}
+
+/* Dark Mode Support */
+body.dark-mode .admin-header {
+    background: var(--surface);
+    border-bottom-color: var(--border);
+}
+
+body.dark-mode .admin-auth-prompt-content,
+body.dark-mode .admin-access-denied-content {
+    background: var(--surface);
+}
+
+body.dark-mode .admin-user-email {
+    background: var(--background);
+}
+
+body.dark-mode .admin-tab:hover {
+    background: rgba(var(--primary-rgb), 0.1);
+}
+
+body.dark-mode .admin-toast {
+    background: var(--surface);
+}

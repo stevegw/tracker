@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Technical Enablement Tracker</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/main.css?v=1.0.68">
+    <link rel="stylesheet" href="css/components.css?v=1.0.68">
+    <link rel="stylesheet" href="css/admin.css?v=1.0.68">
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+</head>
+<body>
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="admin-header-content">
+            <div class="admin-header-left">
+                <h1 class="admin-header-title">🔧 Admin Panel</h1>
+                <span class="admin-header-subtitle">Technical Enablement Tracker</span>
+            </div>
+            <div class="admin-header-right">
+                <a href="./index.html" class="btn btn-secondary btn-small">
+                    ← Back to Main App
+                </a>
+                <div id="admin-user-menu" class="admin-user-menu" style="display: none;">
+                    <span id="admin-user-email" class="admin-user-email"></span>
+                    <button id="admin-sign-out-btn" class="btn btn-secondary btn-small">Sign Out</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Auth Prompt (shown when not authenticated) -->
+    <div id="admin-auth-prompt" class="admin-auth-prompt" style="display: none;">
+        <div class="admin-auth-prompt-content">
+            <div class="admin-auth-icon">🔐</div>
+            <h2>Admin Authentication Required</h2>
+            <p>Please sign in with your admin account to access the admin panel.</p>
+            <button class="btn btn-primary btn-large" id="admin-auth-btn">Sign In</button>
+        </div>
+    </div>
+
+    <!-- Access Denied (shown when authenticated but not admin) -->
+    <div id="admin-access-denied" class="admin-access-denied" style="display: none;">
+        <div class="admin-access-denied-content">
+            <div class="admin-access-denied-icon">⛔</div>
+            <h2>Access Denied</h2>
+            <p>You are signed in as <strong id="denied-user-email"></strong>, but this account does not have admin privileges.</p>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 16px;">
+                Contact your system administrator to request admin access.
+            </p>
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button class="btn btn-secondary" id="admin-sign-out-btn-denied">Sign Out</button>
+                <button class="btn btn-primary" id="go-to-main-app-btn">Go to Main App</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Content (shown when authenticated and admin) -->
+    <main id="admin-content" class="admin-main" style="display: none;">
+        <div class="admin-container">
+            <!-- Tabs -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" id="admin-tab-manage" onclick="AdminPanelComponent.switchTab('manage')">
+                    📋 Manage Schedules
+                </button>
+                <button class="admin-tab" id="admin-tab-import" onclick="AdminPanelComponent.switchTab('import')">
+                    📅 Import Schedule
+                </button>
+            </div>
+
+            <!-- Manage Tab Content -->
+            <div id="admin-content-manage" class="admin-tab-content">
+                <div class="admin-content-header">
+                    <p class="admin-content-description">
+                        Create and manage lookup schedules that users can select when creating activities.
+                    </p>
+                    <button class="btn btn-primary" id="admin-add-lookup-btn">
+                        ＋ New Lookup Schedule
+                    </button>
+                </div>
+                <div id="admin-lookup-list">
+                    <!-- Admin lookup schedules will be rendered here -->
+                </div>
+            </div>
+
+            <!-- Import Tab Content -->
+            <div id="admin-content-import" class="admin-tab-content" style="display: none;">
+                <!-- Input Area -->
+                <div id="admin-schedule-input-area">
+                    <div class="form-group">
+                        <label>Load Saved Schedule (Optional)</label>
+                        <select id="admin-schedule-load-template" class="form-select">
+                            <option value="">-- Load a saved schedule --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="admin-schedule-text-input">Paste Class Schedule</label>
+                        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">
+                            Copy and paste your class schedule. Format should include day headers (MONDAY, TUESDAY, etc.)
+                            followed by classes with times (e.g., "05:05 AM Basic Training  Gym").
+                        </p>
+                        <textarea id="admin-schedule-text-input"
+                                  class="form-textarea"
+                                  rows="12"
+                                  placeholder="Example:&#10;MONDAY&#10;05:05 AMBasic Training  Gym&#10;06:00 AMMasters Swim  Indoor Pool&#10;&#10;TUESDAY&#10;06:15 AMBodyPump™  Studio A&#10;..."></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; margin-top: 16px;">
+                        <button class="btn btn-primary" id="admin-schedule-parse-btn">
+                            Parse Schedule
+                        </button>
+                        <button class="btn btn-secondary" id="admin-schedule-save-template-btn">
+                            Save as Template
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Preview Area -->
+                <div id="admin-schedule-preview-area" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <button class="btn btn-small btn-secondary" id="admin-schedule-select-all-btn">
+                                Select All
+                            </button>
+                            <button class="btn btn-small btn-secondary" id="admin-schedule-deselect-all-btn">
+                                Deselect All
+                            </button>
+                        </div>
+                        <button class="btn btn-small" id="admin-schedule-back-btn">
+                            ← Back to Input
+                        </button>
+                    </div>
+
+                    <div id="admin-schedule-preview-content" class="schedule-preview-content">
+                        <!-- Parsed schedule will be rendered here -->
+                    </div>
+
+                    <div style="margin-top: 24px; text-align: right;">
+                        <button class="btn btn-primary btn-large" id="admin-schedule-import-btn">
+                            Import Selected Classes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Admin Lookup Form Modal -->
+    <div class="modal" id="admin-lookup-form-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="admin-lookup-form-title">New Lookup Schedule</h2>
+                <button class="modal-close" id="admin-lookup-form-close">&times;</button>
+            </div>
+            <form id="admin-lookup-form">
+                <input type="hidden" id="admin-lookup-id">
+
+                <div class="form-group">
+                    <label for="admin-lookup-title">Title *</label>
+                    <input type="text" id="admin-lookup-title" required class="form-input" placeholder="e.g., BodyPump™ Class">
+                </div>
+
+                <div class="form-group">
+                    <label for="admin-lookup-description">Description</label>
+                    <textarea id="admin-lookup-description" class="form-textarea" rows="2" placeholder="e.g., Full body workout with weights"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="admin-lookup-category">Category</label>
+                        <select id="admin-lookup-category" class="form-select">
+                            <option value="">None</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="admin-lookup-cadence">Cadence</label>
+                        <select id="admin-lookup-cadence" class="form-select">
+                            <option value="one-time">One-time</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly" selected>Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="admin-lookup-studio">Studio / Location</label>
+                        <input type="text" id="admin-lookup-studio" class="form-input" placeholder="e.g., Genesis Overland Park">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="admin-lookup-time">Time</label>
+                        <input type="time" id="admin-lookup-time" class="form-input">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="admin-lookup-notes">Notes</label>
+                    <textarea id="admin-lookup-notes" class="form-textarea" rows="3" placeholder="Additional information..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="admin-lookup-cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Lookup Schedule</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div class="modal" id="admin-auth-modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Admin Sign In</h2>
+                <button class="modal-close" id="admin-auth-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Sign In Form -->
+                <div id="admin-signin-container">
+                    <form id="admin-signin-form">
+                        <div class="form-group">
+                            <label for="admin-signin-email">Email</label>
+                            <input type="email" id="admin-signin-email" required class="form-input" placeholder="admin@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-signin-password">Password</label>
+                            <input type="password" id="admin-signin-password" required class="form-input">
+                        </div>
+                        <div class="error-message" id="admin-signin-error"></div>
+                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 16px; font-size: 14px;">
+                        Don't have an account? <a href="#" id="admin-show-signup">Sign up</a>
+                    </p>
+                </div>
+
+                <!-- Sign Up Form -->
+                <div id="admin-signup-container" style="display: none;">
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                        Note: Creating an account does not automatically grant admin access. Contact your system administrator to request admin privileges.
+                    </p>
+                    <form id="admin-signup-form">
+                        <div class="form-group">
+                            <label for="admin-signup-email">Email</label>
+                            <input type="email" id="admin-signup-email" required class="form-input" placeholder="you@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-signup-password">Password</label>
+                            <input type="password" id="admin-signup-password" required class="form-input" minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-signup-confirm-password">Confirm Password</label>
+                            <input type="password" id="admin-signup-confirm-password" required class="form-input" minlength="6">
+                        </div>
+                        <div class="error-message" id="admin-signup-error"></div>
+                        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 16px; font-size: 14px;">
+                        Already have an account? <a href="#" id="admin-show-signin">Sign in</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="admin-toast" id="admin-toast">
+        <span id="admin-toast-message"></span>
+    </div>
+
+    <!-- Version Display -->
+    <div class="version-display" id="app-version"></div>
+
+    <!-- Scripts -->
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Core utilities and models -->
+    <script src="js/version.js"></script>
+    <script src="js/utils.js?v=1.0.68"></script>
+    <script src="js/storage.js?v=1.0.68"></script>
+    <script src="js/supabase-client.js?v=1.0.68"></script>
+    <script src="js/models.js?v=1.0.68"></script>
+    <script src="js/supabase-sync.js?v=1.0.68"></script>
+
+    <!-- Admin-specific scripts -->
+    <script src="js/components/admin-panel.js?v=1.0.68"></script>
+    <script src="js/admin-auth.js?v=1.0.68"></script>
+    <script src="js/admin-app.js?v=1.0.68"></script>
+</body>
+</html>
