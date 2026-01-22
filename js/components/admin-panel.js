@@ -256,7 +256,7 @@ const AdminPanelComponent = {
         const notes = document.getElementById('admin-lookup-notes').value.trim();
 
         if (!title) {
-            UIController.showToast('Please enter a title', 'error');
+            AdminAuth.showToast('Please enter a title', 'error');
             return;
         }
 
@@ -276,19 +276,18 @@ const AdminPanelComponent = {
             if (lookupId) {
                 // Update existing lookup schedule
                 await lookupModel.update(lookupId, data);
-                UIController.showToast('Lookup schedule updated', 'success');
+                AdminAuth.showToast('Lookup schedule updated', 'success');
             } else {
                 // Create new lookup schedule
                 await lookupModel.create(data);
-                UIController.showToast('Lookup schedule created', 'success');
+                AdminAuth.showToast('Lookup schedule created', 'success');
             }
 
             this.hideLookupForm();
             this.renderLookupSchedules();
-            UIController.refresh();
         } catch (error) {
             console.error('Error saving lookup schedule:', error);
-            UIController.showToast('Error saving lookup schedule', 'error');
+            AdminAuth.showToast('Error saving lookup schedule', 'error');
         }
     },
 
@@ -408,14 +407,13 @@ const AdminPanelComponent = {
 
             if (success) {
                 this.renderLookupSchedules();
-                UIController.showToast('Lookup schedule deleted', 'success');
-                UIController.refresh();
+                AdminAuth.showToast('Lookup schedule deleted', 'success');
             } else {
-                UIController.showToast('Failed to delete lookup schedule', 'error');
+                AdminAuth.showToast('Failed to delete lookup schedule', 'error');
             }
         } catch (error) {
             console.error('Error deleting lookup schedule:', error);
-            UIController.showToast('Error deleting lookup schedule', 'error');
+            AdminAuth.showToast('Error deleting lookup schedule', 'error');
         }
     },
 
@@ -493,7 +491,7 @@ const AdminPanelComponent = {
             textArea.value = schedule.text;
         }
 
-        UIController.showToast(`Loaded schedule: ${schedule.name}`, 'success');
+        AdminAuth.showToast(`Loaded schedule: ${schedule.name}`, 'success');
     },
 
     /**
@@ -505,14 +503,14 @@ const AdminPanelComponent = {
 
         const text = textArea.value.trim();
         if (!text) {
-            UIController.showToast('Please paste some schedule text first', 'error');
+            AdminAuth.showToast('Please paste some schedule text first', 'error');
             return;
         }
 
         const result = parseScheduleText(text);
 
         if (!result.success) {
-            UIController.showToast(result.error, 'error');
+            AdminAuth.showToast(result.error, 'error');
             return;
         }
 
@@ -526,7 +524,7 @@ const AdminPanelComponent = {
         if (inputArea) inputArea.style.display = 'none';
         if (previewArea) previewArea.style.display = 'block';
 
-        UIController.showToast('Schedule parsed successfully! Select classes to import.', 'success');
+        AdminAuth.showToast('Schedule parsed successfully! Select classes to import.', 'success');
     },
 
     /**
@@ -636,7 +634,7 @@ const AdminPanelComponent = {
      */
     async importSelectedClasses() {
         if (this.selectedClasses.size === 0) {
-            UIController.showToast('Please select at least one class to import', 'error');
+            AdminAuth.showToast('Please select at least one class to import', 'error');
             return;
         }
 
@@ -682,11 +680,8 @@ const AdminPanelComponent = {
         // Switch back to manage tab
         this.switchTab('manage');
 
-        // Refresh UI
-        UIController.refresh();
-
         // Show success message
-        UIController.showToast(`Successfully imported ${importedCount} lookup ${importedCount === 1 ? 'schedule' : 'schedules'}! They are now available to all users.`, 'success');
+        AdminAuth.showToast(`Successfully imported ${importedCount} lookup ${importedCount === 1 ? 'schedule' : 'schedules'}! They are now available to all users.`, 'success');
     },
 
     /**
@@ -695,7 +690,7 @@ const AdminPanelComponent = {
     saveAsTemplate() {
         const textArea = document.getElementById('admin-schedule-text-input');
         if (!textArea || !textArea.value.trim()) {
-            UIController.showToast('No schedule text to save', 'error');
+            AdminAuth.showToast('No schedule text to save', 'error');
             return;
         }
 
@@ -713,6 +708,6 @@ const AdminPanelComponent = {
         Storage.saveSchedules(this.savedSchedules);
 
         this.renderTemplateList();
-        UIController.showToast(`Schedule template "${name}" saved!`, 'success');
+        AdminAuth.showToast(`Schedule template "${name}" saved!`, 'success');
     }
 };
